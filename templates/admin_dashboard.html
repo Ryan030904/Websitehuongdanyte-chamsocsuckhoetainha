@@ -1,0 +1,559 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard - HealthFirst{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary-color: #0d6efd;
+        --secondary-color: #6c757d;
+        --success-color: #28a745;
+        --warning-color: #ffc107;
+        --danger-color: #dc3545;
+        --light-bg: #ecf0f1;
+        --dark-bg: #0d6efd;
+    }
+
+    body {
+        background: #f8f9fa;
+    }
+
+    .sidebar {
+        background: white;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        min-height: 100vh;
+        position: fixed;
+        top: 76px;
+        left: 0;
+        width: 250px;
+        z-index: 1000;
+    }
+
+    .main-content {
+        margin-left: 250px;
+        padding: 20px;
+        margin-top: 76px;
+    }
+
+    .stats-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        padding: 25px;
+        margin-bottom: 20px;
+        transition: transform 0.3s ease;
+    }
+
+    .stats-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .stats-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        color: white;
+        margin-bottom: 15px;
+    }
+
+    .stats-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .stats-label {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .bg-users { background: var(--primary-color); }
+    .bg-assessments { background: var(--success-color); }
+    .bg-contacts { background: var(--warning-color); }
+    .bg-realtime { background: var(--danger-color); }
+
+    .realtime-indicator {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        background: #27ae60;
+        border-radius: 50%;
+        margin-right: 8px;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+    }
+
+    .sidebar-nav {
+        padding: 20px 0;
+    }
+
+    .sidebar-nav .nav-link {
+        color: #333;
+        padding: 12px 20px;
+        border-radius: 0;
+        transition: all 0.3s ease;
+        border-left: 3px solid transparent;
+    }
+
+    .sidebar-nav .nav-link:hover {
+        background: var(--light-bg);
+        color: var(--primary-color);
+        border-left-color: var(--primary-color);
+    }
+
+    .sidebar-nav .nav-link.active {
+        background: var(--primary-color);
+        color: white;
+        border-left-color: var(--primary-color);
+    }
+
+    .sidebar-nav .nav-link i {
+        width: 20px;
+        margin-right: 10px;
+    }
+
+    .chart-container {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+
+    .quick-actions {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+
+    .action-btn {
+        background: var(--primary-color);
+        border: none;
+        border-radius: 10px;
+        padding: 15px 20px;
+        color: white;
+        text-decoration: none;
+        display: block;
+        margin-bottom: 10px;
+        transition: all 0.3s ease;
+        text-align: center;
+    }
+
+    .action-btn:hover {
+        background: var(--secondary-color);
+        color: white;
+        transform: translateY(-2px);
+        text-decoration: none;
+    }
+
+    .recent-activity {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+
+    .activity-item {
+        padding: 15px 0;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        align-items: center;
+    }
+
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+
+    .activity-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+        color: white;
+        font-size: 16px;
+    }
+
+    .activity-content h6 {
+        margin: 0;
+        font-size: 0.9rem;
+    }
+
+    .activity-content small {
+        color: #666;
+    }
+
+    .bg-user { background: var(--primary-color); }
+    .bg-assessment { background: var(--success-color); }
+    .bg-contact { background: var(--warning-color); }
+
+    @media (max-width: 768px) {
+        .sidebar {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar.show {
+            transform: translateX(0);
+        }
+        
+        .main-content {
+            margin-left: 0;
+        }
+        
+        .sidebar-toggle {
+            display: block;
+        }
+    }
+
+    .sidebar-toggle {
+        display: none;
+        position: fixed;
+        top: 80px;
+        left: 10px;
+        z-index: 1001;
+        background: var(--primary-color);
+        border: none;
+        color: white;
+        padding: 10px;
+        border-radius: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Sidebar Toggle for Mobile -->
+<button class="btn sidebar-toggle" onclick="toggleSidebar()">
+    <i class="fas fa-bars"></i>
+</button>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+    <div class="sidebar-nav">
+        <div class="text-center mb-4">
+            <h5 class="text-primary">
+                <i class="fas fa-shield-alt me-2"></i>Admin Panel
+            </h5>
+        </div>
+        
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link active" href="{{ url_for('admin.admin_dashboard') }}">
+                    <i class="fas fa-tachometer-alt"></i>Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('admin.admin_users') }}">
+                    <i class="fas fa-users"></i>Quản lý người dùng
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('admin.admin_assessments') }}">
+                    <i class="fas fa-stethoscope"></i>Đánh giá sức khỏe
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('admin.admin_contacts') }}">
+                    <i class="fas fa-envelope"></i>Liên hệ
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('admin.admin_reports') }}">
+                    <i class="fas fa-chart-bar"></i>Báo cáo
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('admin.admin_settings') }}">
+                    <i class="fas fa-cog"></i>Cài đặt
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main-content">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="fas fa-tachometer-alt me-2"></i>Admin Dashboard
+            </h1>
+            <p class="text-muted mb-0">Quản lý hệ thống HealthFirst</p>
+        </div>
+        <div class="d-flex align-items-center">
+            <span class="realtime-indicator"></span>
+            <small class="text-muted">Dữ liệu thời gian thực</small>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stats-card">
+                <div class="stats-icon bg-users">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stats-number" id="totalUsers">--</div>
+                <div class="stats-label">Tổng người dùng</div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stats-card">
+                <div class="stats-icon bg-assessments">
+                    <i class="fas fa-stethoscope"></i>
+                </div>
+                <div class="stats-number" id="totalAssessments">--</div>
+                <div class="stats-label">Đánh giá sức khỏe</div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stats-card">
+                <div class="stats-icon bg-contacts">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <div class="stats-number" id="totalContacts">--</div>
+                <div class="stats-label">Liên hệ</div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="stats-card">
+                <div class="stats-icon bg-realtime">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stats-number" id="activeUsers">--</div>
+                <div class="stats-label">Người dùng hoạt động</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Charts -->
+        <div class="col-lg-8">
+            <div class="chart-container">
+                <h5 class="mb-3">
+                    <i class="fas fa-chart-line me-2"></i>Thống kê hoạt động
+                </h5>
+                <canvas id="activityChart" height="100"></canvas>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="col-lg-4">
+            <div class="quick-actions">
+                <h5 class="mb-3">
+                    <i class="fas fa-bolt me-2"></i>Thao tác nhanh
+                </h5>
+                <a href="{{ url_for('admin.admin_users') }}" class="action-btn">
+                    <i class="fas fa-user-plus me-2"></i>Thêm người dùng mới
+                </a>
+                <a href="{{ url_for('admin.admin_assessments') }}" class="action-btn">
+                    <i class="fas fa-eye me-2"></i>Xem đánh giá mới
+                </a>
+                    <a href="{{ url_for('admin.admin_contacts') }}" class="action-btn">
+                    <i class="fas fa-reply me-2"></i>Phản hồi liên hệ
+                </a>
+                <a href="{{ url_for('admin.admin_reports') }}" class="action-btn">
+                    <i class="fas fa-download me-2"></i>Tải báo cáo
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="row">
+        <div class="col-12">
+            <div class="recent-activity">
+                <h5 class="mb-3">
+                    <i class="fas fa-history me-2"></i>Hoạt động gần đây
+                </h5>
+                <div id="recentActivity">
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Đang tải...</span>
+                        </div>
+                        <p class="mt-2">Đang tải hoạt động gần đây...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Initialize dashboard
+    document.addEventListener('DOMContentLoaded', function() {
+        loadDashboardData();
+        loadRecentActivity();
+        initializeCharts();
+    });
+
+    function loadDashboardData() {
+        // Load statistics from Firebase
+        fetch('/api/firebase/statistics')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    updateStatistics(data.statistics);
+                }
+            })
+            .catch(error => {
+                console.error('Error loading statistics:', error);
+                // Fallback data
+                updateStatistics({
+                    total_users: 0,
+                    total_assessments: 0,
+                    total_contacts: 0,
+                    active_users: 0
+                });
+            });
+    }
+
+    function updateStatistics(stats) {
+        document.getElementById('totalUsers').textContent = stats.total_users || 0;
+        document.getElementById('totalAssessments').textContent = stats.total_assessments || 0;
+        document.getElementById('totalContacts').textContent = stats.total_contacts || 0;
+        document.getElementById('activeUsers').textContent = stats.active_users || 0;
+    }
+
+    function loadRecentActivity() {
+        fetch('/api/firebase/statistics')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    displayRecentActivity(data.statistics);
+                }
+            })
+            .catch(error => {
+                console.error('Error loading recent activity:', error);
+                displayRecentActivity([]);
+            });
+    }
+
+    function displayRecentActivity(stats) {
+        const container = document.getElementById('recentActivity');
+        
+        if (!stats.recent_assessments || stats.recent_assessments.length === 0) {
+            container.innerHTML = `
+                <div class="text-center py-4">
+                    <i class="fas fa-info-circle fa-2x text-muted mb-3"></i>
+                    <p class="text-muted">Chưa có hoạt động nào</p>
+                </div>
+            `;
+            return;
+        }
+
+        const activities = [];
+        
+        // Add recent assessments
+        if (stats.recent_assessments) {
+            stats.recent_assessments.forEach(assessment => {
+                activities.push({
+                    type: 'assessment',
+                    icon: 'fas fa-stethoscope',
+                    bgClass: 'bg-assessment',
+                    title: 'Đánh giá sức khỏe mới',
+                    description: `${assessment.user_name || 'Người dùng'} - ${assessment.symptoms || 'Triệu chứng'}`,
+                    time: new Date(assessment.created_at).toLocaleDateString('vi-VN')
+                });
+            });
+        }
+
+        // Add recent contacts
+        if (stats.recent_contacts) {
+            stats.recent_contacts.forEach(contact => {
+                activities.push({
+                    type: 'contact',
+                    icon: 'fas fa-envelope',
+                    bgClass: 'bg-contact',
+                    title: 'Liên hệ mới',
+                    description: `${contact.name} - ${contact.subject || 'Không có tiêu đề'}`,
+                    time: new Date(contact.created_at).toLocaleDateString('vi-VN')
+                });
+            });
+        }
+
+        // Sort by time (newest first)
+        activities.sort((a, b) => new Date(b.time) - new Date(a.time));
+
+        // Display activities
+        container.innerHTML = activities.slice(0, 10).map(activity => `
+            <div class="activity-item">
+                <div class="activity-icon ${activity.bgClass}">
+                    <i class="${activity.icon}"></i>
+                </div>
+                <div class="activity-content">
+                    <h6>${activity.title}</h6>
+                    <small>${activity.description}</small><br>
+                    <small class="text-muted">${activity.time}</small>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function initializeCharts() {
+        const ctx = document.getElementById('activityChart').getContext('2d');
+        
+        // Sample data - replace with real data from Firebase
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'],
+                datasets: [{
+                    label: 'Người dùng mới',
+                    data: [12, 19, 3, 5, 2, 3, 7],
+                    borderColor: '#0d6efd',
+                    backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                    tension: 0.4
+                }, {
+                    label: 'Đánh giá sức khỏe',
+                    data: [8, 15, 12, 18, 22, 19, 25],
+                    borderColor: '#28a745',
+                    backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        sidebar.classList.toggle('show');
+    }
+
+    // Auto-refresh data every 30 seconds
+    setInterval(() => {
+        loadDashboardData();
+        loadRecentActivity();
+    }, 30000);
+</script>
+{% endblock %}

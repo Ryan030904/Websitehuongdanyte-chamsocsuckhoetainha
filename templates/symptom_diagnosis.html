@@ -1,0 +1,702 @@
+{% extends 'base.html' %}
+{% block title %}Chuẩn đoán triệu chứng - HealthFirst{% endblock %}
+{% block content %}
+    <!-- Hero Section -->
+    <section class="hero-section bg-primary text-white py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="display-4 fw-bold mb-4">
+                        <i class="fas fa-robot me-3"></i>Chuẩn đoán triệu chứng AI
+                    </h1>
+                    <p class="lead mb-4">
+                        Hệ thống AI thông minh giúp phân tích triệu chứng và đưa ra chẩn đoán sơ bộ. 
+                        Tích hợp máy học với cơ sở dữ liệu y tế chuyên nghiệp.
+                    </p>
+                    <div class="d-flex flex-wrap gap-3">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-brain text-warning me-2"></i>
+                            <span>AI Machine Learning</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-database text-info me-2"></i>
+                            <span>40+ Bệnh phổ biến</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-shield-alt text-success me-2"></i>
+                            <span>Độ tin cậy cao</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <div class="ai-illustration">
+                        <i class="fas fa-robot fa-8x text-warning mb-3"></i>
+                        <div class="pulse-ring"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Diagnosis Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row">
+                <!-- Diagnosis Form -->
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-gradient-primary text-white">
+                            <h3 class="mb-0">
+                                <i class="fas fa-stethoscope me-2"></i>Chẩn đoán AI
+                            </h3>
+                        </div>
+                        <div class="card-body p-4">
+                            <form id="aiDiagnosisForm">
+                                <!-- Patient Info -->
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <label for="patientAge" class="form-label">Tuổi</label>
+                                        <input type="number" class="form-control" id="patientAge" name="age" 
+                                               value="{{ user_info.age or '' }}" min="1" max="120" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="daysSick" class="form-label">Số ngày có triệu chứng</label>
+                                        <input type="number" class="form-control" id="daysSick" name="days_sick" 
+                                               min="1" max="30" required>
+                                    </div>
+                                </div>
+
+                                <!-- Symptom Selection -->
+                                <div class="mb-4">
+                                    <label class="form-label">Chọn triệu chứng (có thể chọn nhiều)</label>
+                                    <div class="symptom-selection-area">
+                                        <div class="row" id="symptomGrid">
+                                            <!-- Symptoms will be loaded here -->
+                                        </div>
+                                        <div class="text-center mt-3">
+                                            <button type="button" class="btn btn-outline-primary" id="loadMoreSymptoms">
+                                                <i class="fas fa-plus me-2"></i>Tải thêm triệu chứng
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Custom Symptoms -->
+                                <div class="mb-4">
+                                    <label for="customSymptoms" class="form-label">Triệu chứng khác (tùy chọn)</label>
+                                    <textarea class="form-control" id="customSymptoms" name="custom_symptoms" rows="3" 
+                                              placeholder="Mô tả thêm các triệu chứng khác nếu có..."></textarea>
+                                </div>
+
+                                <!-- Submit Button -->
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-primary btn-lg" id="diagnoseBtn">
+                                        <i class="fas fa-robot me-2"></i>Chẩn đoán AI
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Info Panel -->
+                <div class="col-lg-4">
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-info-circle me-2"></i>Thông tin AI
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="ai-stats">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Độ chính xác:</span>
+                                    <span class="badge bg-success">95%</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Bệnh được hỗ trợ:</span>
+                                    <span class="badge bg-primary">40+</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Triệu chứng:</span>
+                                    <span class="badge bg-info">130+</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span>Thời gian xử lý:</span>
+                                    <span class="badge bg-warning">&lt; 2s</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Tips -->
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-warning text-dark">
+                            <h5 class="mb-0">
+                                <i class="fas fa-lightbulb me-2"></i>Mẹo sử dụng
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled mb-0">
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    Chọn tất cả triệu chứng bạn đang gặp
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    Càng nhiều triệu chứng, kết quả càng chính xác
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    AI chỉ đưa ra chẩn đoán sơ bộ
+                                </li>
+                                <li>
+                                    <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                                    Luôn tham khảo ý kiến bác sĩ
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Diagnosis Result -->
+    <section id="aiResultSection" class="py-5" style="display: none;">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="card border-0 shadow-lg">
+                        <div class="card-header bg-gradient-success text-white">
+                            <h3 class="mb-0">
+                                <i class="fas fa-clipboard-check me-2"></i>Kết quả chẩn đoán AI
+                            </h3>
+                        </div>
+                        <div class="card-body p-4">
+                            <div id="aiResultContent">
+                                <!-- AI result will be displayed here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Health Assessment Section -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="content-card">
+                        <h3 class="text-center mb-4">
+                            <i class="fas fa-clipboard-list me-2"></i>Đánh giá triệu chứng truyền thống
+                        </h3>
+                        {% if user_info %}
+                            <form id="assessmentForm">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="age" class="form-label">Tuổi</label>
+                                        <input type="number" class="form-control" id="age" name="age" 
+                                               value="{{ user_info.age or '' }}" min="0" max="120" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="days_sick" class="form-label">Số ngày bị bệnh</label>
+                                        <input type="number" class="form-control" id="days_sick" name="days_sick" 
+                                               min="1" max="30" required>
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="symptoms" class="form-label">Mô tả triệu chứng</label>
+                                        <textarea class="form-control" id="symptoms" name="symptoms" rows="4" 
+                                                  placeholder="Mô tả chi tiết các triệu chứng bạn đang gặp phải..." required></textarea>
+                                    </div>
+                                    <div class="col-12 text-center">
+                                        <button type="submit" class="btn btn-primary btn-lg">
+                                            <i class="fas fa-search me-2"></i>Đánh giá
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                            
+                            <!-- Assessment Result -->
+                            <div id="assessmentResult" class="mt-4" style="display: none;">
+                                <div class="alert" id="resultAlert">
+                                    <h5 id="resultTitle"></h5>
+                                    <p id="resultDescription"></p>
+                                    <div id="resultRecommendations"></div>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="text-center">
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Vui lòng <a href="{{ url_for('auth.login') }}" class="alert-link">đăng nhập</a> để sử dụng tính năng đánh giá triệu chứng
+                                </div>
+                                <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập ngay
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .ai-illustration {
+            position: relative;
+        }
+        
+        .pulse-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1.5);
+                opacity: 0;
+            }
+        }
+        
+        .symptom-checkbox {
+            display: none;
+        }
+        
+        .symptom-label {
+            display: block;
+            padding: 8px 12px;
+            margin: 2px;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .symptom-checkbox:checked + .symptom-label {
+            background: #0d6efd;
+            color: white;
+            border-color: #0d6efd;
+            transform: scale(1.05);
+        }
+        
+        .symptom-label:hover {
+            border-color: #0d6efd;
+            background: #e7f1ff;
+        }
+        
+        .ai-result-card {
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        
+        .priority-emergency {
+            border-left: 5px solid #dc3545;
+        }
+        
+        .priority-high {
+            border-left: 5px solid #fd7e14;
+        }
+        
+        .priority-consult {
+            border-left: 5px solid #ffc107;
+        }
+        
+        .priority-self-care {
+            border-left: 5px solid #198754;
+        }
+        
+        .confidence-bar {
+            height: 8px;
+            border-radius: 4px;
+            background: #e9ecef;
+            overflow: hidden;
+        }
+        
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745, #20c997);
+            transition: width 1s ease;
+        }
+        
+        .content-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .form-control {
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+        }
+        
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+    </style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let allSymptoms = [];
+    let displayedSymptoms = 0;
+    const symptomsPerLoad = 20;
+
+    // Load symptoms on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        loadSymptoms();
+    });
+
+    // Load available symptoms from AI API
+    async function loadSymptoms() {
+        try {
+            const response = await fetch('/api/ai/symptoms');
+            const data = await response.json();
+            
+            if (data.success) {
+                allSymptoms = data.symptoms;
+                displaySymptoms();
+            } else {
+                console.error('Failed to load symptoms:', data.error);
+                showFallbackSymptoms();
+            }
+        } catch (error) {
+            console.error('Error loading symptoms:', error);
+            showFallbackSymptoms();
+        }
+    }
+
+    // Display symptoms in grid
+    function displaySymptoms() {
+        const grid = document.getElementById('symptomGrid');
+        const endIndex = Math.min(displayedSymptoms + symptomsPerLoad, allSymptoms.length);
+        
+        for (let i = displayedSymptoms; i < endIndex; i++) {
+            const symptom = allSymptoms[i];
+            const symptomDiv = document.createElement('div');
+            symptomDiv.className = 'col-md-6 col-lg-4';
+            symptomDiv.innerHTML = `
+                <input type="checkbox" class="symptom-checkbox" id="symptom_${i}" name="symptoms" value="${symptom}">
+                <label class="symptom-label" for="symptom_${i}">${symptom.replace(/_/g, ' ')}</label>
+            `;
+            grid.appendChild(symptomDiv);
+        }
+        
+        displayedSymptoms = endIndex;
+        
+        // Hide load more button if all symptoms are displayed
+        if (displayedSymptoms >= allSymptoms.length) {
+            document.getElementById('loadMoreSymptoms').style.display = 'none';
+        }
+    }
+
+    // Show fallback symptoms if API fails
+    function showFallbackSymptoms() {
+        const fallbackSymptoms = [
+            'fever', 'headache', 'cough', 'fatigue', 'nausea', 'vomiting', 'diarrhea',
+            'abdominal_pain', 'chest_pain', 'shortness_of_breath', 'dizziness',
+            'joint_pain', 'muscle_pain', 'skin_rash', 'itching', 'swelling'
+        ];
+        
+        allSymptoms = fallbackSymptoms;
+        displaySymptoms();
+    }
+
+    // Load more symptoms button
+    document.getElementById('loadMoreSymptoms').addEventListener('click', function() {
+        displaySymptoms();
+    });
+
+    // AI Diagnosis Form Handler
+    document.getElementById('aiDiagnosisForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const selectedSymptoms = Array.from(document.querySelectorAll('input[name="symptoms"]:checked'))
+            .map(cb => cb.value);
+        const customSymptoms = formData.get('custom_symptoms');
+        
+        // Combine selected and custom symptoms
+        let allSymptoms = [...selectedSymptoms];
+        if (customSymptoms) {
+            const customList = customSymptoms.split(',').map(s => s.trim()).filter(s => s);
+            allSymptoms = [...allSymptoms, ...customList];
+        }
+        
+        if (allSymptoms.length === 0) {
+            alert('Vui lòng chọn ít nhất một triệu chứng');
+            return;
+        }
+        
+        const data = {
+            symptoms: allSymptoms.join(', '),
+            age: parseInt(formData.get('age')),
+            days_sick: parseInt(formData.get('days_sick'))
+        };
+        
+        // Show loading state
+        const diagnoseBtn = document.getElementById('diagnoseBtn');
+        const originalText = diagnoseBtn.innerHTML;
+        diagnoseBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang chẩn đoán...';
+        diagnoseBtn.disabled = true;
+        
+        try {
+            const response = await fetch('/api/ai/quick-diagnosis', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                displayAIResult(result.result);
+            } else {
+                alert('Lỗi: ' + (result.error || 'Không thể chẩn đoán'));
+            }
+        } catch (error) {
+            alert('Lỗi kết nối: ' + error.message);
+        } finally {
+            // Restore button state
+            diagnoseBtn.innerHTML = originalText;
+            diagnoseBtn.disabled = false;
+        }
+    });
+
+    // Display AI diagnosis result
+    function displayAIResult(result) {
+        const resultSection = document.getElementById('aiResultSection');
+        const resultContent = document.getElementById('aiResultContent');
+        
+        const priorityClass = `priority-${result.priority}`;
+        const priorityText = {
+            'emergency': '🚨 Khẩn cấp',
+            'high': '⚠️ Cao',
+            'consult_doctor': '👨‍⚕️ Cần tư vấn bác sĩ',
+            'self_care': '🏠 Tự chăm sóc'
+        };
+        
+        resultContent.innerHTML = `
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="ai-result-card ${priorityClass} p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h4 class="mb-0">${result.disease}</h4>
+                            <span class="badge bg-${getPriorityColor(result.priority)} fs-6">${priorityText[result.priority]}</span>
+                        </div>
+                        
+                        <p class="text-muted mb-3">${result.description}</p>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <h6>Độ tin cậy AI</h6>
+                                <div class="confidence-bar">
+                                    <div class="confidence-fill" style="width: ${result.confidence}%"></div>
+                                </div>
+                                <small class="text-muted">${result.confidence}%</small>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Mức độ nghiêm trọng</h6>
+                                <div class="d-flex align-items-center">
+                                    <div class="progress flex-grow-1 me-2" style="height: 8px;">
+                                        <div class="progress-bar bg-${getSeverityColor(result.severity_score)}" 
+                                             style="width: ${result.severity_score * 10}%"></div>
+                                    </div>
+                                    <span class="badge bg-secondary">${result.severity_score}/10</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6><i class="fas fa-shield-alt me-2"></i>Biện pháp phòng ngừa</h6>
+                                <ul class="list-unstyled">
+                                    ${result.precautions.map(precaution => `<li><i class="fas fa-check text-success me-2"></i>${precaution}</li>`).join('')}
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6><i class="fas fa-lightbulb me-2"></i>Khuyến nghị</h6>
+                                <ul class="list-unstyled">
+                                    ${result.recommendations.map(rec => `<li><i class="fas fa-arrow-right text-primary me-2"></i>${rec}</li>`).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Thông tin phân tích</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <small class="text-muted">Triệu chứng đã phân tích:</small>
+                                <div class="mt-2">
+                                    ${result.symptoms_analyzed.map(symptom => 
+                                        `<span class="badge bg-light text-dark me-1 mb-1">${symptom}</span>`
+                                    ).join('')}
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <small class="text-muted">Tuổi bệnh nhân:</small>
+                                <div class="fw-bold">${result.age_factor} tuổi</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <small class="text-muted">Thời gian bệnh:</small>
+                                <div class="fw-bold">${result.duration_factor} ngày</div>
+                            </div>
+                            
+                            <div class="alert alert-warning small">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <strong>Lưu ý:</strong> Đây chỉ là chẩn đoán sơ bộ. Luôn tham khảo ý kiến bác sĩ để có chẩn đoán chính xác.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        resultSection.style.display = 'block';
+        resultSection.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Helper functions for colors
+    function getPriorityColor(priority) {
+        const colors = {
+            'emergency': 'danger',
+            'high': 'warning',
+            'consult_doctor': 'info',
+            'self_care': 'success'
+        };
+        return colors[priority] || 'secondary';
+    }
+
+    function getSeverityColor(score) {
+        if (score >= 8) return 'danger';
+        if (score >= 6) return 'warning';
+        if (score >= 4) return 'info';
+        return 'success';
+    }
+
+    // Health Assessment Form Handler (existing code)
+    document.getElementById('assessmentForm')?.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const data = {
+            symptoms: formData.get('symptoms'),
+            age: parseInt(formData.get('age')),
+            days_sick: parseInt(formData.get('days_sick'))
+        };
+        
+        try {
+            const response = await fetch('/api/assess', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok) {
+                displayAssessmentResult(result);
+            } else {
+                alert('Lỗi: ' + (result.error || 'Không thể đánh giá triệu chứng'));
+            }
+        } catch (error) {
+            alert('Lỗi kết nối: ' + error.message);
+        }
+    });
+    
+    function displayAssessmentResult(result) {
+        const resultDiv = document.getElementById('assessmentResult');
+        const alert = document.getElementById('resultAlert');
+        const title = document.getElementById('resultTitle');
+        const description = document.getElementById('resultDescription');
+        const recommendations = document.getElementById('resultRecommendations');
+        
+        // Set alert class based on priority
+        alert.className = 'alert';
+        if (result.priority === 'emergency') {
+            alert.classList.add('alert-danger');
+        } else if (result.priority === 'high') {
+            alert.classList.add('alert-warning');
+        } else if (result.priority === 'consult_doctor') {
+            alert.classList.add('alert-info');
+        } else {
+            alert.classList.add('alert-success');
+        }
+        
+        title.textContent = result.message;
+        description.textContent = result.description;
+        
+        // Display recommendations
+        if (result.recommendations && result.recommendations.length > 0) {
+            recommendations.innerHTML = '<h6>Khuyến nghị:</h6><ul>' + 
+                result.recommendations.map(rec => `<li>${rec}</li>`).join('') + '</ul>';
+        } else {
+            recommendations.innerHTML = '';
+        }
+        
+        resultDiv.style.display = 'block';
+        resultDiv.scrollIntoView({ behavior: 'smooth' });
+    }
+</script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

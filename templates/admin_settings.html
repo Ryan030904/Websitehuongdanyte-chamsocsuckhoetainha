@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cài đặt - HealthFirst Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1e3a8a;
+            --secondary-color: #3b82f6;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --dark-color: #1f2937;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--dark-color) 0%, #374151 100%);
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .admin-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            padding: 1rem 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .sidebar {
+            background: rgba(31, 41, 55, 0.95);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            min-height: 100vh;
+        }
+        
+        .sidebar .nav-link {
+            color: #d1d5db;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            margin: 0.25rem 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background: var(--secondary-color);
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .main-content {
+            padding: 2rem;
+        }
+        
+        .content-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .btn-admin {
+            background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-admin:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+        
+        .form-control, .form-select {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--secondary-color);
+            color: white;
+            box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
+        }
+        
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .form-label {
+            color: #d1d5db;
+            font-weight: 500;
+        }
+        
+        .setting-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .setting-title {
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .setting-description {
+            color: #9ca3af;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.2);
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: var(--secondary-color);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Admin Header -->
+    <div class="admin-header">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                                         <h1 class="mb-0">
+                         <i class="fas fa-shield-alt me-2"></i>
+                         HealthFirst Admin
+                     </h1>
+                </div>
+                <div class="col-md-6 text-end">
+                    <div class="dropdown">
+                        <button class="btn btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle me-2"></i>
+                            {{ current_user.display_name or current_user.email }}
+                        </button>
+                                                                         <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('main.index') }}">
+                                <i class="fas fa-home me-2"></i>Trang chủ
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.symptom_diagnosis') }}">
+                                <i class="fas fa-stethoscope me-2"></i>Chuẩn đoán triệu chứng
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">
+                                <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                            </a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 sidebar">
+                <div class="pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('admin.admin_dashboard') }}">
+                                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('admin.admin_users') }}">
+                                <i class="fas fa-users me-2"></i>Quản lý người dùng
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('admin.admin_assessments') }}">
+                                <i class="fas fa-clipboard-list me-2"></i>Đánh giá sức khỏe
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('admin.admin_contacts') }}">
+                                <i class="fas fa-envelope me-2"></i>Tin nhắn liên hệ
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('admin.admin_reports') }}">
+                                <i class="fas fa-chart-bar me-2"></i>Báo cáo
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="{{ url_for('admin.admin_settings') }}">
+                                <i class="fas fa-cog me-2"></i>Cài đặt
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 main-content">
+                <!-- Page Header -->
+                <div class="content-card">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3>
+                            <i class="fas fa-cog me-2"></i>Cài đặt hệ thống
+                        </h3>
+                        <div>
+                            <button class="btn btn-admin me-2" onclick="saveAllSettings()">
+                                <i class="fas fa-save me-2"></i>Lưu tất cả
+                            </button>
+                            <button class="btn btn-admin" onclick="resetSettings()">
+                                <i class="fas fa-undo me-2"></i>Khôi phục mặc định
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- General Settings -->
+                <div class="content-card">
+                    <h5 class="mb-3">
+                        <i class="fas fa-sliders-h me-2"></i>Cài đặt chung
+                    </h5>
+                    
+                    <div class="setting-item">
+                        <div class="setting-title">Tên ứng dụng</div>
+                        <div class="setting-description">Tên hiển thị của ứng dụng trên giao diện</div>
+                        <input type="text" class="form-control" id="appName" value="HealthFirst" placeholder="Nhập tên ứng dụng">
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-title">Mô tả ứng dụng</div>
+                        <div class="setting-description">Mô tả ngắn gọn về ứng dụng</div>
+                        <textarea class="form-control" id="appDescription" rows="3" placeholder="Nhập mô tả ứng dụng">Hệ thống hướng dẫn y tế và chăm sóc sức khỏe tại nhà</textarea>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-title">Email liên hệ</div>
+                        <div class="setting-description">Email chính để liên hệ với người dùng</div>
+                        <input type="email" class="form-control" id="contactEmail" value="admin@healthfirst.com" placeholder="Nhập email liên hệ">
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-title">Số điện thoại hỗ trợ</div>
+                        <div class="setting-description">Số điện thoại hỗ trợ khách hàng</div>
+                        <input type="tel" class="form-control" id="supportPhone" value="+84 123 456 789" placeholder="Nhập số điện thoại">
+                    </div>
+                </div>
+
+                <!-- Security Settings -->
+                <div class="content-card">
+                    <h5 class="mb-3">
+                        <i class="fas fa-shield-alt me-2"></i>Cài đặt bảo mật
+                    </h5>
+                    
+                    <div class="setting-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="setting-title">Xác thực 2 yếu tố</div>
+                                <div class="setting-description">Yêu cầu xác thực 2 yếu tố cho tài khoản admin</div>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="twoFactorAuth">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="setting-title">Giới hạn đăng nhập</div>
+                                <div class="setting-description">Giới hạn số lần đăng nhập sai trước khi khóa tài khoản</div>
+                            </div>
+                            <select class="form-select" id="loginAttempts" style="width: 100px;">
+                                <option value="3">3 lần</option>
+                                <option value="5" selected>5 lần</option>
+                                <option value="10">10 lần</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="setting-title">Thời gian khóa tài khoản</div>
+                                <div class="setting-description">Thời gian khóa tài khoản sau khi đăng nhập sai</div>
+                            </div>
+                            <select class="form-select" id="lockoutDuration" style="width: 150px;">
+                                <option value="15">15 phút</option>
+                                <option value="30" selected>30 phút</option>
+                                <option value="60">1 giờ</option>
+                                <option value="1440">24 giờ</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notification Settings -->
+                <div class="content-card">
+                    <h5 class="mb-3">
+                        <i class="fas fa-bell me-2"></i>Cài đặt thông báo
+                    </h5>
+                    
+                    <div class="setting-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="setting-title">Thông báo email</div>
+                                <div class="setting-description">Gửi thông báo qua email khi có đánh giá mới</div>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="emailNotifications" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="setting-title">Thông báo tin nhắn mới</div>
+                                <div class="setting-description">Thông báo khi có tin nhắn liên hệ mới</div>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="contactNotifications" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="setting-title">Thông báo đánh giá khẩn cấp</div>
+                                <div class="setting-description">Thông báo ngay lập tức cho đánh giá có độ ưu tiên cao</div>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="emergencyNotifications" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Settings -->
+                <div class="content-card">
+                    <h5 class="mb-3">
+                        <i class="fas fa-server me-2"></i>Cài đặt hệ thống
+                    </h5>
+                    
+                    <div class="setting-item">
+                        <div class="setting-title">Chế độ bảo trì</div>
+                        <div class="setting-description">Bật chế độ bảo trì để người dùng không thể truy cập</div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <label class="switch">
+                                <input type="checkbox" id="maintenanceMode">
+                                <span class="slider"></span>
+                            </label>
+                            <small class="text-warning">Chế độ bảo trì sẽ tạm thời vô hiệu hóa ứng dụng</small>
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-title">Thời gian phiên làm việc</div>
+                        <div class="setting-description">Thời gian tự động đăng xuất khi không hoạt động (phút)</div>
+                        <select class="form-select" id="sessionTimeout">
+                            <option value="15">15 phút</option>
+                            <option value="30" selected>30 phút</option>
+                            <option value="60">1 giờ</option>
+                            <option value="120">2 giờ</option>
+                            <option value="0">Không giới hạn</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-title">Sao lưu tự động</div>
+                        <div class="setting-description">Tần suất sao lưu dữ liệu tự động</div>
+                        <select class="form-select" id="backupFrequency">
+                            <option value="daily">Hàng ngày</option>
+                            <option value="weekly" selected>Hàng tuần</option>
+                            <option value="monthly">Hàng tháng</option>
+                            <option value="never">Không sao lưu</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+         <script>
+         // Load current settings when page loads
+         document.addEventListener('DOMContentLoaded', function() {
+             loadCurrentSettings();
+         });
+         
+         // Load current settings from server
+         function loadCurrentSettings() {
+             fetch('/admin/settings/get')
+             .then(response => response.json())
+             .then(data => {
+                 if (data.success) {
+                     applySettings(data.settings);
+                 } else {
+                     console.error('Lỗi load cài đặt:', data.error);
+                 }
+             })
+             .catch(error => {
+                 console.error('Lỗi kết nối:', error);
+             });
+         }
+         
+         // Apply settings to form
+         function applySettings(settings) {
+             if (settings.app_name) document.getElementById('appName').value = settings.app_name;
+             if (settings.app_description) document.getElementById('appDescription').value = settings.app_description;
+             if (settings.contact_email) document.getElementById('contactEmail').value = settings.contact_email;
+             if (settings.support_phone) document.getElementById('supportPhone').value = settings.support_phone;
+             if (settings.two_factor_auth !== undefined) document.getElementById('twoFactorAuth').checked = settings.two_factor_auth;
+             if (settings.login_attempts) document.getElementById('loginAttempts').value = settings.login_attempts;
+             if (settings.lockout_duration) document.getElementById('lockoutDuration').value = settings.lockout_duration;
+             if (settings.email_notifications !== undefined) document.getElementById('emailNotifications').checked = settings.email_notifications;
+             if (settings.contact_notifications !== undefined) document.getElementById('contactNotifications').checked = settings.contact_notifications;
+             if (settings.emergency_notifications !== undefined) document.getElementById('emergencyNotifications').checked = settings.emergency_notifications;
+             if (settings.maintenance_mode !== undefined) document.getElementById('maintenanceMode').checked = settings.maintenance_mode;
+             if (settings.session_timeout) document.getElementById('sessionTimeout').value = settings.session_timeout;
+             if (settings.backup_frequency) document.getElementById('backupFrequency').value = settings.backup_frequency;
+         }
+         
+         // Save all settings
+         function saveAllSettings() {
+             const settings = {
+                 appName: document.getElementById('appName').value,
+                 appDescription: document.getElementById('appDescription').value,
+                 contactEmail: document.getElementById('contactEmail').value,
+                 supportPhone: document.getElementById('supportPhone').value,
+                 twoFactorAuth: document.getElementById('twoFactorAuth').checked,
+                 loginAttempts: document.getElementById('loginAttempts').value,
+                 lockoutDuration: document.getElementById('lockoutDuration').value,
+                 emailNotifications: document.getElementById('emailNotifications').checked,
+                 contactNotifications: document.getElementById('contactNotifications').checked,
+                 emergencyNotifications: document.getElementById('emergencyNotifications').checked,
+                 maintenanceMode: document.getElementById('maintenanceMode').checked,
+                 sessionTimeout: document.getElementById('sessionTimeout').value,
+                 backupFrequency: document.getElementById('backupFrequency').value
+             };
+
+             fetch('/admin/settings/update', {
+                 method: 'POST',
+                 headers: {
+                     'Content-Type': 'application/json',
+                 },
+                 body: JSON.stringify(settings)
+             })
+             .then(response => response.json())
+             .then(data => {
+                 if (data.success) {
+                     showAlert(data.message, 'success');
+                     // Áp dụng cài đặt ngay lập tức
+                     applySettingsImmediately(settings);
+                 } else {
+                     showAlert(data.error, 'danger');
+                 }
+             })
+             .catch(error => {
+                 showAlert('Lỗi cập nhật cài đặt', 'danger');
+             });
+         }
+         
+         // Áp dụng cài đặt ngay lập tức vào giao diện
+         function applySettingsImmediately(settings) {
+             // Cập nhật tên ứng dụng trong header
+             const headerTitle = document.querySelector('.admin-header h1');
+             if (headerTitle && settings.appName) {
+                 headerTitle.innerHTML = `<i class="fas fa-shield-alt me-2"></i>${settings.appName} Admin`;
+             }
+             
+             // Cập nhật title của trang
+             if (settings.appName) {
+                 document.title = `Cài đặt - ${settings.appName} Admin`;
+             }
+             
+             // Áp dụng chế độ bảo trì
+             if (settings.maintenanceMode) {
+                 showMaintenanceMode();
+             } else {
+                 hideMaintenanceMode();
+             }
+             
+             // Áp dụng thời gian session
+             if (settings.sessionTimeout > 0) {
+                 setSessionTimeout(settings.sessionTimeout);
+             }
+             
+             // Áp dụng thông báo
+             updateNotificationSettings(settings);
+         }
+         
+         // Hiển thị chế độ bảo trì
+         function showMaintenanceMode() {
+             const maintenanceBanner = document.createElement('div');
+             maintenanceBanner.id = 'maintenance-banner';
+             maintenanceBanner.className = 'alert alert-warning text-center mb-0';
+             maintenanceBanner.innerHTML = '<strong>⚠️ CHẾ ĐỘ BẢO TRÌ ĐANG BẬT</strong> - Hệ thống đang trong chế độ bảo trì';
+             maintenanceBanner.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; z-index: 9999; border-radius: 0;';
+             
+             document.body.insertBefore(maintenanceBanner, document.body.firstChild);
+         }
+         
+         // Ẩn chế độ bảo trì
+         function hideMaintenanceMode() {
+             const banner = document.getElementById('maintenance-banner');
+             if (banner) banner.remove();
+         }
+         
+         // Thiết lập thời gian session
+         function setSessionTimeout(minutes) {
+             if (window.sessionTimer) clearTimeout(window.sessionTimer);
+             
+             window.sessionTimer = setTimeout(() => {
+                 showAlert('Phiên làm việc đã hết hạn. Vui lòng đăng nhập lại.', 'warning');
+                 setTimeout(() => {
+                     window.location.href = '/logout';
+                 }, 2000);
+             }, minutes * 60 * 1000);
+         }
+         
+         // Cập nhật cài đặt thông báo
+         function updateNotificationSettings(settings) {
+             // Lưu cài đặt thông báo vào localStorage để sử dụng ở các trang khác
+             localStorage.setItem('notificationSettings', JSON.stringify({
+                 email: settings.emailNotifications,
+                 contact: settings.contactNotifications,
+                 emergency: settings.emergencyNotifications
+             }));
+             
+             // Hiển thị thông báo xác nhận
+             if (settings.emailNotifications) {
+                 console.log('Thông báo email đã được bật');
+             }
+             if (settings.contactNotifications) {
+                 console.log('Thông báo tin nhắn mới đã được bật');
+             }
+             if (settings.emergencyNotifications) {
+                 console.log('Thông báo đánh giá khẩn cấp đã được bật');
+             }
+         }
+
+        // Reset settings to default
+        function resetSettings() {
+            if (confirm('Bạn có chắc muốn khôi phục tất cả cài đặt về mặc định?')) {
+                // Reset form values
+                document.getElementById('appName').value = 'HealthFirst';
+                document.getElementById('appDescription').value = 'Hệ thống hướng dẫn y tế và chăm sóc sức khỏe tại nhà';
+                document.getElementById('contactEmail').value = 'admin@healthfirst.com';
+                document.getElementById('supportPhone').value = '+84 123 456 789';
+                document.getElementById('twoFactorAuth').checked = false;
+                document.getElementById('loginAttempts').value = '5';
+                document.getElementById('lockoutDuration').value = '30';
+                document.getElementById('emailNotifications').checked = true;
+                document.getElementById('contactNotifications').checked = true;
+                document.getElementById('emergencyNotifications').checked = true;
+                document.getElementById('maintenanceMode').checked = false;
+                document.getElementById('sessionTimeout').value = '30';
+                document.getElementById('backupFrequency').value = 'weekly';
+                
+                showAlert('Đã khôi phục cài đặt về mặc định', 'info');
+            }
+        }
+
+        // Show alert function
+        function showAlert(message, type = 'info') {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+            alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        }
+
+                 // Auto-save settings on change
+         document.addEventListener('DOMContentLoaded', function() {
+             const inputs = document.querySelectorAll('input, select, textarea');
+             inputs.forEach(input => {
+                 input.addEventListener('change', function() {
+                     // Auto-save after 2 seconds of inactivity
+                     clearTimeout(window.autoSaveTimeout);
+                     window.autoSaveTimeout = setTimeout(() => {
+                         saveAllSettings();
+                     }, 2000);
+                 });
+             });
+             
+             // Thêm event listener cho toggle switches
+             const toggleSwitches = document.querySelectorAll('input[type="checkbox"]');
+             toggleSwitches.forEach(toggle => {
+                 toggle.addEventListener('change', function() {
+                     // Áp dụng ngay lập tức cho một số cài đặt quan trọng
+                     const settingName = this.id;
+                     const isChecked = this.checked;
+                     
+                     if (settingName === 'maintenanceMode') {
+                         if (isChecked) {
+                             showMaintenanceMode();
+                         } else {
+                             hideMaintenanceMode();
+                         }
+                     }
+                     
+                     if (settingName === 'twoFactorAuth') {
+                         if (isChecked) {
+                             showAlert('Xác thực 2 yếu tố đã được bật. Bạn sẽ cần xác thực thêm khi đăng nhập.', 'info');
+                         } else {
+                             showAlert('Xác thực 2 yếu tố đã được tắt.', 'info');
+                         }
+                     }
+                     
+                     // Auto-save sau 2 giây
+                     clearTimeout(window.autoSaveTimeout);
+                     window.autoSaveTimeout = setTimeout(() => {
+                         saveAllSettings();
+                     }, 2000);
+                 });
+             });
+         });
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

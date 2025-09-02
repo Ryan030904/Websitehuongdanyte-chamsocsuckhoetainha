@@ -1,0 +1,709 @@
+{% extends 'base.html' %}
+
+{% block title %}Hồ sơ người dùng - HealthFirst{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary-color: #0d6efd;
+        --secondary-color: #6c757d;
+        --success-color: #28a745;
+        --warning-color: #ffc107;
+        --danger-color: #dc3545;
+    }
+
+    body {
+        background: linear-gradient(135deg, #0d6efd 0%, #6c757d 100%);
+        min-height: 100vh;
+    }
+
+    .profile-section {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        margin-top: 100px;
+        margin-bottom: 50px;
+    }
+
+    .profile-header {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        padding: 40px;
+        border-radius: 15px 15px 0 0;
+        text-align: center;
+    }
+
+    .profile-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        margin: 0 auto 20px;
+        border: 4px solid rgba(255,255,255,0.3);
+    }
+
+    .profile-content {
+        padding: 40px;
+    }
+
+    .info-card {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-left: 4px solid var(--primary-color);
+    }
+
+    .history-card {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+        overflow: hidden;
+    }
+
+    .history-header {
+        background: var(--primary-color);
+        color: white;
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .history-content {
+        padding: 20px;
+    }
+
+    .assessment-item {
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+    }
+
+    .assessment-item:hover {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        transform: translateY(-2px);
+    }
+
+    .edit-btn {
+        background: var(--primary-color);
+        border: none;
+        border-radius: 25px;
+        padding: 8px 20px;
+        color: white;
+        transition: all 0.3s ease;
+    }
+
+    .edit-btn:hover {
+        background: var(--secondary-color);
+        transform: translateY(-2px);
+    }
+
+    .modal-header {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+    }
+
+    .btn-save {
+        background: var(--success-color);
+        border: none;
+        border-radius: 25px;
+        padding: 10px 30px;
+        color: white;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-save:hover {
+        background: #218838;
+        transform: translateY(-2px);
+    }
+
+    .btn-cancel {
+        background: var(--secondary-color);
+        border: none;
+        border-radius: 25px;
+        padding: 10px 30px;
+        color: white;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-cancel:hover {
+        background: #5a6268;
+        transform: translateY(-2px);
+    }
+
+    .health-metric {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+    }
+
+    .health-metric:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    }
+
+    .metric-value {
+        font-size: 2rem;
+        font-weight: bold;
+        color: var(--primary-color);
+    }
+
+    .metric-label {
+        color: #6c757d;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .status-badge {
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .status-active {
+        background: var(--success-color);
+        color: white;
+    }
+
+    .status-inactive {
+        background: var(--danger-color);
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Profile Section -->
+<div class="container">
+    <div class="profile-section">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="profile-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <h2 class="mb-2">{{ user.display_name or user.email }}</h2>
+            <p class="mb-0">
+                <span class="status-badge status-active">Tài khoản hoạt động</span>
+            </p>
+        </div>
+
+        <!-- Profile Content -->
+        <div class="profile-content">
+            <div class="row">
+                <!-- Personal Information -->
+                <div class="col-lg-8">
+                    <h4 class="mb-4">
+                        <i class="fas fa-user-circle me-2"></i>Thông tin cá nhân
+                    </h4>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-card">
+                                <h6><i class="fas fa-envelope me-2"></i>Email</h6>
+                                <p class="mb-0">{{ user.email }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-card">
+                                <h6><i class="fas fa-user me-2"></i>Tên hiển thị</h6>
+                                <p class="mb-0">{{ user.display_name or 'Chưa cập nhật' }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-card">
+                                <h6><i class="fas fa-venus-mars me-2"></i>Giới tính</h6>
+                                <p class="mb-0">{{ user.gender or 'Chưa cập nhật' }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-card">
+                                <h6><i class="fas fa-birthday-cake me-2"></i>Tuổi</h6>
+                                <p class="mb-0">{{ user.age or 'Chưa cập nhật' }} tuổi</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-card">
+                                <h6><i class="fas fa-ruler-vertical me-2"></i>Chiều cao</h6>
+                                <p class="mb-0">{{ user.height or 'Chưa cập nhật' }} cm</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-card">
+                                <h6><i class="fas fa-weight me-2"></i>Cân nặng</h6>
+                                <p class="mb-0">{{ user.weight or 'Chưa cập nhật' }} kg</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-card">
+                                <h6><i class="fas fa-phone me-2"></i>Số điện thoại</h6>
+                                <p class="mb-0">{{ user.phone or 'Chưa cập nhật' }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-card">
+                                <h6><i class="fas fa-map-marker-alt me-2"></i>Địa chỉ</h6>
+                                <p class="mb-0">{{ user.address or 'Chưa cập nhật' }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-card">
+                                <h6><i class="fas fa-tint me-2"></i>Nhóm máu</h6>
+                                <p class="mb-0">{{ user.blood_type or 'Chưa cập nhật' }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-card">
+                                <h6><i class="fas fa-exclamation-triangle me-2"></i>Dị ứng</h6>
+                                <p class="mb-0">{{ user.allergies or 'Không có' }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-card">
+                                <h6><i class="fas fa-pills me-2"></i>Thuốc đang dùng</h6>
+                                <p class="mb-0">{{ user.medications or 'Không có' }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-card">
+                                <h6><i class="fas fa-phone-alt me-2"></i>Liên hệ khẩn cấp</h6>
+                                <p class="mb-0">{{ user.emergency_contact or 'Chưa cập nhật' }}</p>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="info-card">
+                                <h6><i class="fas fa-history me-2"></i>Tiền sử bệnh</h6>
+                                <p class="mb-0">{{ user.medical_history or 'Không có' }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button class="btn edit-btn" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                            <i class="fas fa-edit me-2"></i>Chỉnh sửa hồ sơ
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Health Metrics -->
+                <div class="col-lg-4">
+                    <h4 class="mb-4">
+                        <i class="fas fa-chart-line me-2"></i>Chỉ số sức khỏe
+                    </h4>
+                    
+                    <div class="health-metric mb-3">
+                        <div class="metric-value" id="bmiValue">--</div>
+                        <div class="metric-label">Chỉ số BMI</div>
+                        <small class="text-muted" id="bmiStatus">Chưa tính</small>
+                    </div>
+
+                    <div class="health-metric mb-3">
+                        <div class="metric-value" id="bmiCategory">--</div>
+                        <div class="metric-label">Phân loại</div>
+                        <small class="text-muted">Theo WHO</small>
+                    </div>
+
+                    <div class="health-metric mb-3">
+                        <div class="metric-value" id="idealWeight">--</div>
+                        <div class="metric-label">Cân nặng lý tưởng</div>
+                        <small class="text-muted">kg</small>
+                    </div>
+
+                    <div class="health-metric">
+                        <div class="metric-value" id="assessmentCount">--</div>
+                        <div class="metric-label">Lần đánh giá</div>
+                        <small class="text-muted">Tổng cộng</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Health History -->
+            <div class="mt-5">
+                <h4 class="mb-4">
+                    <i class="fas fa-history me-2"></i>Lịch sử đánh giá sức khỏe
+                </h4>
+                
+                <div id="healthHistory">
+                    <div class="text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Đang tải...</span>
+                        </div>
+                        <p class="mt-2">Đang tải lịch sử sức khỏe...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Diagnosis History -->
+            <div class="mt-5">
+                <h4 class="mb-4">
+                    <i class="fas fa-robot me-2"></i>Lịch sử chẩn đoán AI
+                </h4>
+                
+                <div id="aiDiagnosisHistory">
+                    <div class="text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Đang tải...</span>
+                        </div>
+                        <p class="mt-2">Đang tải lịch sử chẩn đoán AI...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Profile Modal -->
+<div class="modal fade" id="editProfileModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-edit me-2"></i>Chỉnh sửa hồ sơ
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editProfileForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Tên hiển thị</label>
+                                <input type="text" class="form-control" name="display_name" value="{{ user.display_name or '' }}">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Giới tính</label>
+                                <select class="form-select" name="gender">
+                                    <option value="">Chọn giới tính</option>
+                                    <option value="Nam" {% if user.gender == 'Nam' %}selected{% endif %}>Nam</option>
+                                    <option value="Nữ" {% if user.gender == 'Nữ' %}selected{% endif %}>Nữ</option>
+                                    <option value="Khác" {% if user.gender == 'Khác' %}selected{% endif %}>Khác</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Tuổi</label>
+                                <input type="number" class="form-control" name="age" value="{{ user.age or '' }}" min="1" max="120">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Chiều cao (cm)</label>
+                                <input type="number" class="form-control" name="height" value="{{ user.height or '' }}" min="100" max="250">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Cân nặng (kg)</label>
+                                <input type="number" class="form-control" name="weight" value="{{ user.weight or '' }}" min="20" max="300">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Số điện thoại</label>
+                                <input type="tel" class="form-control" name="phone" value="{{ user.phone or '' }}">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Nhóm máu</label>
+                                <select class="form-select" name="blood_type">
+                                    <option value="">Chọn nhóm máu</option>
+                                    <option value="A+" {% if user.blood_type == 'A+' %}selected{% endif %}>A+</option>
+                                    <option value="A-" {% if user.blood_type == 'A-' %}selected{% endif %}>A-</option>
+                                    <option value="B+" {% if user.blood_type == 'B+' %}selected{% endif %}>B+</option>
+                                    <option value="B-" {% if user.blood_type == 'B-' %}selected{% endif %}>B-</option>
+                                    <option value="AB+" {% if user.blood_type == 'AB+' %}selected{% endif %}>AB+</option>
+                                    <option value="AB-" {% if user.blood_type == 'AB-' %}selected{% endif %}>AB-</option>
+                                    <option value="O+" {% if user.blood_type == 'O+' %}selected{% endif %}>O+</option>
+                                    <option value="O-" {% if user.blood_type == 'O-' %}selected{% endif %}>O-</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Liên hệ khẩn cấp</label>
+                                <input type="text" class="form-control" name="emergency_contact" value="{{ user.emergency_contact or '' }}">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label class="form-label">Địa chỉ</label>
+                                <textarea class="form-control" name="address" rows="2">{{ user.address or '' }}</textarea>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label class="form-label">Dị ứng</label>
+                                <textarea class="form-control" name="allergies" rows="2" placeholder="Liệt kê các dị ứng nếu có...">{{ user.allergies or '' }}</textarea>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label class="form-label">Thuốc đang dùng</label>
+                                <textarea class="form-control" name="medications" rows="2" placeholder="Liệt kê các thuốc đang dùng...">{{ user.medications or '' }}</textarea>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label class="form-label">Tiền sử bệnh</label>
+                                <textarea class="form-control" name="medical_history" rows="3" placeholder="Mô tả tiền sử bệnh...">{{ user.medical_history or '' }}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Hủy
+                </button>
+                <button type="button" class="btn btn-save" onclick="saveProfile()">
+                    <i class="fas fa-save me-2"></i>Lưu thay đổi
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Load user data and calculate health metrics
+    document.addEventListener('DOMContentLoaded', function() {
+        loadUserData();
+        loadHealthHistory();
+        loadAIDiagnosisHistory();
+    });
+
+    function loadUserData() {
+        // Calculate BMI and other metrics
+        const height = parseInt('{{ user.height or 0 }}') || 0;
+        const weight = parseInt('{{ user.weight or 0 }}') || 0;
+        const isMale = '{{ user.gender }}' === 'Nam';
+        
+        if (height > 0 && weight > 0) {
+            const heightInMeters = height / 100;
+            const bmi = (weight / (heightInMeters * heightInMeters)).toFixed(1);
+            const bmiCategory = getBMICategory(bmi);
+            const idealWeight = calculateIdealWeight(height, isMale);
+            
+            document.getElementById('bmiValue').textContent = bmi;
+            document.getElementById('bmiStatus').textContent = bmiCategory;
+            document.getElementById('bmiCategory').textContent = bmiCategory;
+            document.getElementById('idealWeight').textContent = idealWeight;
+        }
+    }
+
+    function getBMICategory(bmi) {
+        if (bmi < 18.5) return 'Thiếu cân';
+        if (bmi < 25) return 'Bình thường';
+        if (bmi < 30) return 'Thừa cân';
+        return 'Béo phì';
+    }
+
+    function calculateIdealWeight(height, isMale) {
+        // Simple ideal weight calculation
+        if (isMale) {
+            return Math.round((height - 100) * 0.9);
+        } else {
+            return Math.round((height - 100) * 0.85);
+        }
+    }
+
+    function loadHealthHistory() {
+        fetch(`/api/firebase/user-history/{{ user.id }}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.history) {
+                    displayHealthHistory(data.history);
+                    document.getElementById('assessmentCount').textContent = data.history.length;
+                } else {
+                    displayHealthHistory([]);
+                }
+            })
+            .catch(error => {
+                console.error('Error loading health history:', error);
+                displayHealthHistory([]);
+            });
+    }
+
+    function loadAIDiagnosisHistory() {
+        fetch(`/api/firebase/diagnosis-history/{{ user.id }}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.history) {
+                    displayAIDiagnosisHistory(data.history);
+                } else {
+                    displayAIDiagnosisHistory([]);
+                }
+            })
+            .catch(error => {
+                console.error('Error loading AI diagnosis history:', error);
+                displayAIDiagnosisHistory([]);
+            });
+    }
+
+    function displayHealthHistory(history) {
+        const container = document.getElementById('healthHistory');
+        
+        if (history.length === 0) {
+            container.innerHTML = `
+                <div class="text-center py-4">
+                    <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">Chưa có lịch sử đánh giá</h5>
+                    <p class="text-muted">Hãy sử dụng chức năng chẩn đoán triệu chứng để bắt đầu theo dõi sức khỏe</p>
+                    <a href="/symptom-diagnosis" class="btn btn-primary">
+                        <i class="fas fa-stethoscope me-2"></i>Chẩn đoán ngay
+                    </a>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = history.map(assessment => `
+            <div class="history-card">
+                <div class="history-header">
+                    <div>
+                        <h6 class="mb-0">
+                            <i class="fas fa-calendar me-2"></i>
+                            ${new Date(assessment.created_at).toLocaleDateString('vi-VN')}
+                        </h6>
+                        <small>${assessment.symptoms}</small>
+                    </div>
+                    <span class="badge bg-${getPriorityColor(assessment.priority)}">${assessment.priority}</span>
+                </div>
+                <div class="history-content">
+                    <p class="mb-2"><strong>Kết quả:</strong> ${assessment.message}</p>
+                    <p class="mb-2"><strong>Mô tả:</strong> ${assessment.description || 'Không có mô tả'}</p>
+                    ${assessment.recommendations ? `<p class="mb-0"><strong>Khuyến nghị:</strong> ${assessment.recommendations}</p>` : ''}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function displayAIDiagnosisHistory(history) {
+        const container = document.getElementById('aiDiagnosisHistory');
+        
+        if (history.length === 0) {
+            container.innerHTML = `
+                <div class="text-center py-4">
+                    <i class="fas fa-robot fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">Chưa có lịch sử chẩn đoán AI</h5>
+                    <p class="text-muted">Hãy sử dụng chức năng chẩn đoán AI để bắt đầu theo dõi sức khỏe</p>
+                    <a href="/symptom-diagnosis" class="btn btn-primary">
+                        <i class="fas fa-robot me-2"></i>Chẩn đoán AI ngay
+                    </a>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = history.map(diagnosis => `
+            <div class="history-card">
+                <div class="history-header">
+                    <div>
+                        <h6 class="mb-0">
+                            <i class="fas fa-robot me-2"></i>
+                            Chẩn đoán AI - ${new Date(diagnosis.created_at).toLocaleDateString('vi-VN')}
+                        </h6>
+                        <small>Tuổi: ${diagnosis.age} tuổi | Triệu chứng: ${diagnosis.symptoms.join(', ')}</small>
+                    </div>
+                    <span class="badge bg-info">AI</span>
+                </div>
+                <div class="history-content">
+                    ${diagnosis.diagnosis.diseases ? diagnosis.diagnosis.diseases.map(disease => `
+                        <div class="mb-3 p-3 bg-light rounded">
+                            <h6 class="text-primary">${disease.name}</h6>
+                            <p class="mb-2"><strong>Độ tin cậy:</strong> ${disease.confidence || 0}%</p>
+                            ${disease.description ? `<p class="mb-2"><strong>Mô tả:</strong> ${disease.description}</p>` : ''}
+                            ${disease.recommendations ? `<p class="mb-0"><strong>Khuyến nghị:</strong> ${disease.recommendations}</p>` : ''}
+                        </div>
+                    `).join('') : '<p>Không có kết quả chẩn đoán</p>'}
+                    ${diagnosis.custom_symptoms ? `<p class="mt-2"><strong>Triệu chứng khác:</strong> ${diagnosis.custom_symptoms}</p>` : ''}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function getPriorityColor(priority) {
+        switch(priority) {
+            case 'Cao': return 'danger';
+            case 'Trung bình': return 'warning';
+            case 'Thấp': return 'success';
+            default: return 'secondary';
+        }
+    }
+
+    function saveProfile() {
+        const form = document.getElementById('editProfileForm');
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+        
+        // Remove empty values
+        Object.keys(data).forEach(key => {
+            if (data[key] === '') {
+                delete data[key];
+            }
+        });
+
+        fetch('/api/user/update', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                showAlert('Cập nhật hồ sơ thành công!', 'success');
+                // Reload page to show updated data
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
+            } else {
+                showAlert(result.error || 'Có lỗi xảy ra khi cập nhật', 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showAlert('Có lỗi xảy ra khi cập nhật hồ sơ', 'danger');
+        });
+    }
+
+    function showAlert(message, type) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+        alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+        alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        
+        document.body.appendChild(alertDiv);
+        
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            if (alertDiv.parentNode) {
+                alertDiv.remove();
+            }
+        }, 5000);
+    }
+</script>
+{% endblock %}

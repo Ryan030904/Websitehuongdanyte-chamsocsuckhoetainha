@@ -1,0 +1,59 @@
+{
+  "min_age": 0,
+  "max_age": 120,
+  "max_days_home": 7,
+  "temperature_thresholds": {
+    "normal": 37.5,
+    "fever": 38.0,
+    "high_fever": 39.0,
+    "very_high_fever": 40.0
+  },
+  "bmi_categories": {
+    "underweight": 18.5,
+    "normal": 25.0,
+    "overweight": 30.0
+  },
+  "age_groups": {
+    "infant": 2,
+    "child": 12,
+    "teenager": 18,
+    "adult": 65,
+    "elderly": 120
+  },
+  "symptom_severity": {
+    "mild": "Có thể tự chăm sóc tại nhà",
+    "moderate": "Cần theo dõi và có thể cần tư vấn bác sĩ",
+    "severe": "Cần khám bác sĩ sớm",
+    "emergency": "Cần cấp cứu ngay lập tức"
+  },
+  "common_symptoms": {
+    "respiratory": ["ho", "sổ mũi", "nghẹt mũi", "đau họng", "khó thở"],
+    "gastrointestinal": ["đau bụng", "buồn nôn", "nôn", "tiêu chảy", "táo bón"],
+    "fever": ["sốt", "ớn lạnh", "đổ mồ hôi", "mệt mỏi"],
+    "pain": ["đau đầu", "đau cơ", "đau khớp", "đau lưng"],
+    "skin": ["phát ban", "ngứa", "mụn", "vết thương"]
+  },
+  "medication_warnings": {
+    "antibiotics": "Chỉ dùng khi có chỉ định của bác sĩ",
+    "painkillers": "Không dùng quá liều và kéo dài",
+    "fever_reducers": "Theo đúng liều lượng và thời gian",
+    "herbal_medicines": "Tham khảo ý kiến bác sĩ trước khi dùng"
+  },
+  "home_care_guidelines": {
+    "rest": "Nghỉ ngơi đầy đủ",
+    "hydration": "Uống nhiều nước",
+    "nutrition": "Ăn uống đầy đủ dinh dưỡng",
+    "monitoring": "Theo dõi triệu chứng",
+    "hygiene": "Giữ vệ sinh cá nhân"
+  },
+  "when_to_seek_medical_help": [
+    "Triệu chứng kéo dài trên 7 ngày",
+    "Triệu chứng nặng lên",
+    "Xuất hiện triệu chứng mới",
+    "Sốt cao không hạ",
+    "Đau dữ dội",
+    "Khó thở",
+    "Chảy máu bất thường",
+    "Thay đổi ý thức"
+  ]
+}

@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tài liệu y tế - HealthFirst</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .resources-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 100px 0;
+        }
+        .resource-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            height: 100%;
+        }
+        .resource-card:hover {
+            transform: translateY(-5px);
+        }
+        .category-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 1;
+        }
+        .search-box {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .filter-buttons .btn {
+            border-radius: 25px;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-heartbeat me-2"></i>HealthFirst
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Trang chủ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/symptom-diagnosis">Chuẩn đoán triệu chứng</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/guides">Hướng dẫn chăm sóc</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/library">Tài liệu y tế</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/news">Tin tức</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/support">Hỗ trợ</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/auth/login">Đăng nhập</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Resources Header -->
+    <section class="resources-header">
+        <div class="container text-center">
+            <h1 class="display-4 fw-bold mb-4">
+                <i class="fas fa-book-medical me-3"></i>Tài liệu y tế
+            </h1>
+            <p class="lead">Thông tin y tế chính xác và hướng dẫn chăm sóc sức khỏe tại nhà</p>
+        </div>
+    </section>
+
+    <!-- Search and Filter Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="search-box">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="input-group">
+                            <span class="input-group-text bg-primary text-white">
+                                <i class="fas fa-search"></i>
+                            </span>
+                            <input type="text" class="form-control" id="searchInput" 
+                                   placeholder="Tìm kiếm tài liệu y tế...">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <select class="form-select" id="categoryFilter">
+                            <option value="">Tất cả danh mục</option>
+                            <option value="emergency">Cấp cứu</option>
+                            <option value="first-aid">Sơ cứu</option>
+                            <option value="prevention">Phòng bệnh</option>
+                            <option value="nutrition">Dinh dưỡng</option>
+                            <option value="exercise">Tập luyện</option>
+                            <option value="mental-health">Sức khỏe tâm thần</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="filter-buttons text-center mt-3">
+                    <button class="btn btn-outline-primary filter-btn" data-category="all">Tất cả</button>
+                    <button class="btn btn-outline-danger filter-btn" data-category="emergency">Cấp cứu</button>
+                    <button class="btn btn-outline-warning filter-btn" data-category="first-aid">Sơ cứu</button>
+                    <button class="btn btn-outline-success filter-btn" data-category="prevention">Phòng bệnh</button>
+                    <button class="btn btn-outline-info filter-btn" data-category="nutrition">Dinh dưỡng</button>
+                    <button class="btn btn-outline-secondary filter-btn" data-category="exercise">Tập luyện</button>
+                    <button class="btn btn-outline-dark filter-btn" data-category="mental-health">Tâm thần</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Resources Grid -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="row" id="resourcesGrid">
+                <!-- Emergency Resources -->
+                <div class="col-lg-4 col-md-6 mb-4" data-category="emergency">
+                    <div class="card resource-card">
+                        <div class="card-body">
+                            <span class="badge bg-danger category-badge">Cấp cứu</span>
+                            <h5 class="card-title">
+                                <i class="fas fa-exclamation-triangle text-danger me-2"></i>
+                                Dấu hiệu cần gọi cấp cứu
+                            </h5>
+                            <p class="card-text">
+                                Nhận biết các dấu hiệu nguy hiểm cần gọi cấp cứu 115 ngay lập tức.
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>5 phút đọc
+                                </small>
+                                <button class="btn btn-sm btn-outline-primary" onclick="viewResource('emergency-signs')">
+                                    Xem chi tiết
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- First Aid Resources -->
+                <div class="col-lg-4 col-md-6 mb-4" data-category="first-aid">
+                    <div class="card resource-card">
+                        <div class="card-body">
+                            <span class="badge bg-warning text-dark category-badge">Sơ cứu</span>
+                            <h5 class="card-title">
+                                <i class="fas fa-first-aid text-warning me-2"></i>
+                                Hướng dẫn sơ cứu cơ bản
+                            </h5>
+                            <p class="card-text">
+                                Các kỹ năng sơ cứu cần thiết cho các tình huống khẩn cấp thường gặp.
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>10 phút đọc
+                                </small>
+                                <button class="btn btn-sm btn-outline-warning" onclick="viewResource('first-aid-basic')">
+                                    Xem chi tiết
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Prevention Resources -->
+                <div class="col-lg-4 col-md-6 mb-4" data-category="prevention">
+                    <div class="card resource-card">
+                        <div class="card-body">
+                            <span class="badge bg-success category-badge">Phòng bệnh</span>
+                            <h5 class="card-title">
+                                <i class="fas fa-shield-alt text-success me-2"></i>
+                                Phòng bệnh theo mùa
+                            </h5>
+                            <p class="card-text">
+                                Hướng dẫn phòng bệnh và tăng cường sức đề kháng theo từng mùa trong năm.
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>8 phút đọc
+                                </small>
+                                <button class="btn btn-sm btn-outline-success" onclick="viewResource('seasonal-prevention')">
+                                    Xem chi tiết
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nutrition Resources -->
+                <div class="col-lg-4 col-md-6 mb-4" data-category="nutrition">
+                    <div class="card resource-card">
+                        <div class="card-body">
+                            <span class="badge bg-info category-badge">Dinh dưỡng</span>
+                            <h5 class="card-title">
+                                <i class="fas fa-apple-alt text-info me-2"></i>
+                                Dinh dưỡng cân bằng
+                            </h5>
+                            <p class="card-text">
+                                Hướng dẫn xây dựng chế độ ăn uống lành mạnh và cân bằng dinh dưỡng.
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>12 phút đọc
+                                </small>
+                                <button class="btn btn-sm btn-outline-info" onclick="viewResource('balanced-nutrition')">
+                                    Xem chi tiết
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exercise Resources -->
+                <div class="col-lg-4 col-md-6 mb-4" data-category="exercise">
+                    <div class="card resource-card">
+                        <div class="card-body">
+                            <span class="badge bg-secondary category-badge">Tập luyện</span>
+                            <h5 class="card-title">
+                                <i class="fas fa-dumbbell text-secondary me-2"></i>
+                                Bài tập tại nhà
+                            </h5>
+                            <p class="card-text">
+                                Các bài tập thể dục đơn giản có thể thực hiện tại nhà để duy trì sức khỏe.
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>15 phút đọc
+                                </small>
+                                <button class="btn btn-sm btn-outline-secondary" onclick="viewResource('home-exercises')">
+                                    Xem chi tiết
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mental Health Resources -->
+                <div class="col-lg-4 col-md-6 mb-4" data-category="mental-health">
+                    <div class="card resource-card">
+                        <div class="card-body">
+                            <span class="badge bg-dark category-badge">Tâm thần</span>
+                            <h5 class="card-title">
+                                <i class="fas fa-brain text-dark me-2"></i>
+                                Sức khỏe tâm thần
+                            </h5>
+                            <p class="card-text">
+                                Hướng dẫn chăm sóc sức khỏe tâm thần và quản lý căng thẳng hiệu quả.
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>10 phút đọc
+                                </small>
+                                <button class="btn btn-sm btn-outline-dark" onclick="viewResource('mental-health-care')">
+                                    Xem chi tiết
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Tips Section -->
+    <section class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">
+                <i class="fas fa-lightbulb me-2"></i>Mẹo sức khỏe nhanh
+            </h2>
+            <div class="row">
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="text-center">
+                        <i class="fas fa-tint fa-3x text-primary mb-3"></i>
+                        <h6>Uống đủ nước</h6>
+                        <p class="text-muted small">Uống 8-10 ly nước mỗi ngày để duy trì sức khỏe</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="text-center">
+                        <i class="fas fa-bed fa-3x text-success mb-3"></i>
+                        <h6>Ngủ đủ giấc</h6>
+                        <p class="text-muted small">Ngủ 7-9 giờ mỗi đêm để cơ thể phục hồi</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="text-center">
+                        <i class="fas fa-walking fa-3x text-warning mb-3"></i>
+                        <h6>Vận động thường xuyên</h6>
+                        <p class="text-muted small">Đi bộ 30 phút mỗi ngày để tăng cường sức khỏe</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="text-center">
+                        <i class="fas fa-smile fa-3x text-info mb-3"></i>
+                        <h6>Giữ tinh thần lạc quan</h6>
+                        <p class="text-muted small">Tinh thần tích cực giúp tăng cường hệ miễn dịch</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-4">
+        <div class="container text-center">
+            <p>&copy; 2024 HealthFirst. Tất cả quyền được bảo lưu.</p>
+        </div>
+    </footer>
+
+    <!-- Resource Modal -->
+    <div class="modal fade" id="resourceModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="resourceModalTitle">Chi tiết tài liệu</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="resourceModalBody">
+                    <!-- Content will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-primary" onclick="downloadResource()">
+                        <i class="fas fa-download me-2"></i>Tải xuống
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const resources = document.querySelectorAll('#resourcesGrid > div');
+            
+            resources.forEach(resource => {
+                const title = resource.querySelector('.card-title').textContent.toLowerCase();
+                const description = resource.querySelector('.card-text').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                    resource.style.display = 'block';
+                } else {
+                    resource.style.display = 'none';
+                }
+            });
+        });
+
+        // Category filter
+        document.getElementById('categoryFilter').addEventListener('change', function() {
+            const selectedCategory = this.value;
+            filterResources(selectedCategory);
+        });
+
+        // Filter buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const category = this.dataset.category;
+                filterResources(category);
+                
+                // Update active button
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        function filterResources(category) {
+            const resources = document.querySelectorAll('#resourcesGrid > div');
+            
+            resources.forEach(resource => {
+                if (category === 'all' || category === '') {
+                    resource.style.display = 'block';
+                } else if (resource.dataset.category === category) {
+                    resource.style.display = 'block';
+                } else {
+                    resource.style.display = 'none';
+                }
+            });
+        }
+
+        // View resource details
+        function viewResource(resourceId) {
+            const modal = new bootstrap.Modal(document.getElementById('resourceModal'));
+            const title = document.getElementById('resourceModalTitle');
+            const body = document.getElementById('resourceModalBody');
+            
+            // Load resource content based on ID
+            const resourceContent = getResourceContent(resourceId);
+            title.textContent = resourceContent.title;
+            body.innerHTML = resourceContent.content;
+            
+            modal.show();
+        }
+
+        function getResourceContent(resourceId) {
+            const resources = {
+                'emergency-signs': {
+                    title: 'Dấu hiệu cần gọi cấp cứu',
+                    content: `
+                        <h6>🚨 Các dấu hiệu cần gọi cấp cứu 115 ngay lập tức:</h6>
+                        <ul>
+                            <li><strong>Khó thở:</strong> Thở gấp, thở nông, cảm giác nghẹt thở</li>
+                            <li><strong>Đau ngực:</strong> Đau dữ dội, đau lan ra cánh tay, hàm</li>
+                            <li><strong>Chảy máu:</strong> Chảy máu không cầm được, chảy máu nhiều</li>
+                            <li><strong>Mất ý thức:</strong> Ngất xỉu, không phản ứng</li>
+                            <li><strong>Đau đầu dữ dội:</strong> Đau đột ngột, đau như sét đánh</li>
+                            <li><strong>Liệt nửa người:</strong> Yếu hoặc liệt một bên cơ thể</li>
+                        </ul>
+                        <div class="alert alert-danger">
+                            <strong>Lưu ý:</strong> Khi gặp các dấu hiệu trên, hãy gọi 115 ngay lập tức và 
+                            không tự ý di chuyển bệnh nhân nếu không cần thiết.
+                        </div>
+                    `
+                },
+                'first-aid-basic': {
+                    title: 'Hướng dẫn sơ cứu cơ bản',
+                    content: `
+                        <h6>🩹 Các kỹ năng sơ cứu cơ bản:</h6>
+                        <ul>
+                            <li><strong>Vết thương nhỏ:</strong> Rửa sạch bằng nước, băng vết thương</li>
+                            <li><strong>Chảy máu cam:</strong> Ngồi thẳng, bóp mũi, nghiêng đầu về phía trước</li>
+                            <li><strong>Bỏng nhẹ:</strong> Ngâm vùng bỏng trong nước mát 10-15 phút</li>
+                            <li><strong>Gãy xương:</strong> Cố định chi, không di chuyển, gọi cấp cứu</li>
+                            <li><strong>Ngạt thở:</strong> Thực hiện thủ thuật Heimlich</li>
+                        </ul>
+                        <div class="alert alert-warning">
+                            <strong>Lưu ý:</strong> Sơ cứu chỉ là biện pháp tạm thời, 
+                            vẫn cần đưa bệnh nhân đến cơ sở y tế để được điều trị đầy đủ.
+                        </div>
+                    `
+                }
+                // Add more resources as needed
+            };
+            
+            return resources[resourceId] || {
+                title: 'Tài liệu không tìm thấy',
+                content: '<p>Tài liệu này đang được cập nhật. Vui lòng quay lại sau.</p>'
+            };
+        }
+
+        function downloadResource() {
+            // Implement download functionality
+            alert('Tính năng tải xuống đang được phát triển!');
+        }
+    </script>
+</body>
+</html>
+

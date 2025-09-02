@@ -1,0 +1,161 @@
+[
+  {
+    "id": 1,
+    "title": "Sốt và Cảm lạnh",
+    "category": "fever",
+    "keywords": ["sốt", "cảm lạnh", "cúm", "ớn lạnh", "đổ mồ hôi", "mệt mỏi"],
+    "description": "Hướng dẫn chăm sóc khi bị sốt và cảm lạnh",
+    "content": "Sốt là phản ứng tự nhiên của cơ thể khi chống lại nhiễm trùng. Cần theo dõi nhiệt độ và các triệu chứng khác.",
+    "home_care": [
+      "Nghỉ ngơi đầy đủ",
+      "Uống nhiều nước",
+      "Dùng thuốc hạ sốt khi cần thiết",
+      "Theo dõi nhiệt độ thường xuyên"
+    ],
+    "when_to_seek_help": [
+      "Sốt cao trên 39°C",
+      "Sốt kéo dài trên 3 ngày",
+      "Kèm theo triệu chứng nặng"
+    ]
+  },
+  {
+    "id": 2,
+    "title": "Ho và Đau họng",
+    "category": "respiratory",
+    "keywords": ["ho", "đau họng", "viêm họng", "khàn giọng", "nuốt đau"],
+    "description": "Chăm sóc khi bị ho và đau họng",
+    "content": "Ho và đau họng thường do viêm đường hô hấp trên. Có thể tự chăm sóc tại nhà trong hầu hết trường hợp.",
+    "home_care": [
+      "Súc miệng bằng nước muối",
+      "Uống mật ong với chanh",
+      "Giữ ẩm không khí",
+      "Tránh khói thuốc và chất kích thích"
+    ],
+    "when_to_seek_help": [
+      "Ho kéo dài trên 2 tuần",
+      "Ho ra máu",
+      "Khó thở",
+      "Đau họng dữ dội"
+    ]
+  },
+  {
+    "id": 3,
+    "title": "Đau bụng và Tiêu hóa",
+    "category": "gastrointestinal",
+    "keywords": ["đau bụng", "tiêu chảy", "táo bón", "buồn nôn", "nôn", "ợ chua"],
+    "description": "Xử trí các vấn đề tiêu hóa thường gặp",
+    "content": "Các vấn đề tiêu hóa có thể do chế độ ăn, stress hoặc nhiễm trùng. Cần điều chỉnh chế độ ăn và theo dõi triệu chứng.",
+    "home_care": [
+      "Ăn chậm, nhai kỹ",
+      "Tránh thức ăn cay nóng",
+      "Uống đủ nước",
+      "Nghỉ ngơi sau khi ăn"
+    ],
+    "when_to_seek_help": [
+      "Đau bụng dữ dội",
+      "Tiêu chảy ra máu",
+      "Nôn liên tục",
+      "Đau bụng kéo dài"
+    ]
+  },
+  {
+    "id": 4,
+    "title": "Đau đầu và Chóng mặt",
+    "category": "neurological",
+    "keywords": ["đau đầu", "chóng mặt", "hoa mắt", "đau nửa đầu", "căng thẳng"],
+    "description": "Xử trí đau đầu và chóng mặt",
+    "content": "Đau đầu có thể do căng thẳng, thiếu ngủ, hoặc các vấn đề về thị lực. Chóng mặt thường liên quan đến hệ tiền đình.",
+    "home_care": [
+      "Nghỉ ngơi trong phòng yên tĩnh",
+      "Uống đủ nước",
+      "Tránh ánh sáng mạnh",
+      "Thực hiện các bài tập thư giãn"
+    ],
+    "when_to_seek_help": [
+      "Đau đầu dữ dội đột ngột",
+      "Đau đầu kèm sốt cao",
+      "Chóng mặt kèm nôn",
+      "Đau đầu sau chấn thương"
+    ]
+  },
+  {
+    "id": 5,
+    "title": "Vấn đề về Da",
+    "category": "dermatology",
+    "keywords": ["phát ban", "ngứa", "mụn", "chàm", "viêm da", "dị ứng"],
+    "description": "Chăm sóc các vấn đề về da",
+    "content": "Các vấn đề về da có thể do dị ứng, nhiễm trùng hoặc các bệnh lý khác. Cần giữ vệ sinh và tránh gãi.",
+    "home_care": [
+      "Giữ da sạch sẽ",
+      "Tránh gãi",
+      "Sử dụng kem dưỡng ẩm",
+      "Tránh tiếp xúc với chất gây dị ứng"
+    ],
+    "when_to_seek_help": [
+      "Phát ban lan rộng",
+      "Ngứa dữ dội",
+      "Da bị nhiễm trùng",
+      "Phát ban kèm sốt"
+    ]
+  },
+  {
+    "id": 6,
+    "title": "Sức khỏe Trẻ em",
+    "category": "pediatrics",
+    "keywords": ["trẻ em", "trẻ sơ sinh", "sốt trẻ em", "tiêu chảy trẻ em", "ho trẻ em"],
+    "description": "Chăm sóc sức khỏe cho trẻ em",
+    "content": "Trẻ em cần được chăm sóc đặc biệt khi bị bệnh. Cần theo dõi chặt chẽ và có thể cần tư vấn bác sĩ nhi khoa.",
+    "home_care": [
+      "Theo dõi nhiệt độ thường xuyên",
+      "Cho uống đủ nước",
+      "Giữ ấm cơ thể",
+      "Quan sát các dấu hiệu bất thường"
+    ],
+    "when_to_seek_help": [
+      "Trẻ dưới 3 tháng bị sốt",
+      "Sốt cao trên 39°C",
+      "Trẻ không ăn uống",
+      "Triệu chứng nặng lên"
+    ]
+  },
+  {
+    "id": 7,
+    "title": "Sức khỏe Người cao tuổi",
+    "category": "geriatrics",
+    "keywords": ["người già", "người cao tuổi", "huyết áp", "tiểu đường", "tim mạch"],
+    "description": "Chăm sóc sức khỏe cho người cao tuổi",
+    "content": "Người cao tuổi cần được chăm sóc đặc biệt do sức đề kháng yếu và có thể mắc nhiều bệnh mãn tính.",
+    "home_care": [
+      "Khám sức khỏe định kỳ",
+      "Theo dõi huyết áp",
+      "Uống thuốc đúng giờ",
+      "Tập thể dục nhẹ nhàng"
+    ],
+    "when_to_seek_help": [
+      "Thay đổi đột ngột về sức khỏe",
+      "Đau ngực",
+      "Khó thở",
+      "Ngất xỉu"
+    ]
+  },
+  {
+    "id": 8,
+    "title": "Chấn thương và Sơ cứu",
+    "category": "emergency",
+    "keywords": ["chấn thương", "gãy xương", "bong gân", "bỏng", "vết thương", "chảy máu"],
+    "description": "Sơ cứu cơ bản cho các chấn thương",
+    "content": "Biết cách sơ cứu cơ bản có thể giúp giảm thiểu tổn thương và cứu sống người bị nạn.",
+    "home_care": [
+      "Giữ bình tĩnh",
+      "Đánh giá tình trạng nạn nhân",
+      "Gọi cấp cứu khi cần thiết",
+      "Thực hiện sơ cứu cơ bản"
+    ],
+    "when_to_seek_help": [
+      "Chấn thương đầu",
+      "Gãy xương hở",
+      "Bỏng nặng",
+      "Chảy máu không cầm"
+    ]
+  }
+]

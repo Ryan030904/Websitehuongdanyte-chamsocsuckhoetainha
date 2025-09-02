@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% block title %}Hỗ trợ - HealthFirst{% endblock %}
+{% block content %}
+    <div class="container py-5">
+        <h1 class="mb-4"><i class="fas fa-headset me-2"></i>Liên hệ / Hỗ trợ</h1>
+        <div class="row g-4">
+            <div class="col-lg-7">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Gửi câu hỏi / góp ý</h5>
+                        <form id="supportForm">
+                            <div class="mb-3">
+                                <label class="form-label">Họ và tên</label>
+                                <input class="form-control" name="name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" name="email" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Tiêu đề</label>
+                                <input class="form-control" name="subject" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Nội dung</label>
+                                <textarea class="form-control" rows="5" name="message" required></textarea>
+                            </div>
+                            <button class="btn btn-primary" type="submit">
+                                <i class="fas fa-paper-plane me-2"></i>Gửi
+                            </button>
+                            <div id="supportMessage" class="mt-3" style="display:none"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Thông tin liên hệ</h5>
+                        <p class="mb-2"><i class="fas fa-envelope me-2"></i>support@healthfirst.com</p>
+                        <p class="mb-2"><i class="fas fa-phone me-2"></i>1900-xxxx</p>
+                        <p class="mb-0"><i class="fas fa-map-marker-alt me-2"></i>TP. Hồ Chí Minh</p>
+                        <hr>
+                        <h6 class="mb-2">Liên kết nhanh</h6>
+                        <ul class="list-unstyled mb-0">
+                            <li><a href="{{ url_for('main.guides') }}">Hướng dẫn chăm sóc</a></li>
+                            <li><a href="{{ url_for('main.library') }}">Tài liệu y tế</a></li>
+                            <li><a href="{{ url_for('main.news') }}">Tin tức</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block extra_js %}
+    <script>
+        document.getElementById('supportForm').addEventListener('submit', async function(e){
+            e.preventDefault();
+            const data = Object.fromEntries(new FormData(this).entries());
+            const res = await fetch('/api/contact', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(data)});
+            const result = await res.json();
+            const box = document.getElementById('supportMessage');
+            if(res.ok){
+                box.className = 'alert alert-success';
+                box.textContent = 'Gửi thành công! Chúng tôi sẽ phản hồi sớm.';
+                this.reset();
+            } else {
+                box.className = 'alert alert-danger';
+                box.textContent = result.error || 'Không thể gửi, vui lòng thử lại.';
+            }
+            box.style.display = 'block';
+        });
+    </script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

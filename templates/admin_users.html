@@ -1,0 +1,844 @@
+{% extends 'base.html' %}
+
+{% block title %}Quản lý người dùng - HealthFirst Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary-color: #0d6efd;
+        --secondary-color: #6c757d;
+        --success-color: #28a745;
+        --warning-color: #ffc107;
+        --danger-color: #dc3545;
+        --dark-color: #0d6efd;
+    }
+    
+    body {
+        background: #f8f9fa;
+        color: #333;
+    }
+    
+    .admin-header {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        padding: 1rem 0;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-top: 76px;
+    }
+    
+    .sidebar {
+        background: white;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        min-height: 100vh;
+        position: fixed;
+        top: 76px;
+        left: 0;
+        width: 250px;
+        z-index: 1000;
+    }
+    
+    .sidebar .nav-link {
+        color: #333;
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        margin: 0.25rem 0.5rem;
+        transition: all 0.3s ease;
+        border-left: 3px solid transparent;
+    }
+    
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link.active {
+        background: var(--primary-color);
+        color: white;
+        transform: translateX(5px);
+        border-left-color: var(--primary-color);
+    }
+    
+    .main-content {
+        margin-left: 250px;
+        padding: 2rem;
+        margin-top: 76px;
+    }
+    
+    .content-card {
+        background: white;
+        border: 1px solid #dee2e6;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        margin-bottom: 1.5rem;
+    }
+    
+    .table th {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+    
+    .btn-admin {
+        background: var(--primary-color);
+        border: none;
+        border-radius: 0.5rem;
+        padding: 0.5rem 1rem;
+        color: white;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-admin:hover {
+        background: var(--secondary-color);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(13, 110, 253, 0.4);
+        color: white;
+    }
+    
+    .status-badge {
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+    
+    .status-active {
+        background: var(--success-color);
+        color: white;
+    }
+    
+    .status-inactive {
+        background: var(--danger-color);
+        color: white;
+    }
+    
+    .status-pending {
+        background: var(--warning-color);
+        color: #000;
+    }
+    
+    .search-box {
+        background: white;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        margin-bottom: 1.5rem;
+    }
+    
+    .filter-buttons {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-bottom: 1rem;
+    }
+    
+    .filter-btn {
+        background: #f8f9fa;
+        border: 2px solid #dee2e6;
+        border-radius: 0.5rem;
+        padding: 0.5rem 1rem;
+        color: #6c757d;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .filter-btn.active {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+    
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--primary-color);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+    
+    .pagination .page-link {
+        color: var(--primary-color);
+        border-color: #dee2e6;
+    }
+    
+    .pagination .page-item.active .page-link {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+    
+    .modal-header {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+    }
+    
+    .btn-save {
+        background: var(--success-color);
+        border: none;
+        border-radius: 0.5rem;
+        padding: 0.5rem 1.5rem;
+        color: white;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-save:hover {
+        background: #218838;
+        transform: translateY(-2px);
+        color: white;
+    }
+    
+    .btn-cancel {
+        background: var(--secondary-color);
+        border: none;
+        border-radius: 0.5rem;
+        padding: 0.5rem 1.5rem;
+        color: white;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-cancel:hover {
+        background: #5a6268;
+        transform: translateY(-2px);
+        color: white;
+    }
+    
+    .btn-delete {
+        background: var(--danger-color);
+        border: none;
+        border-radius: 0.5rem;
+        padding: 0.5rem 1rem;
+        color: white;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-delete:hover {
+        background: #c82333;
+        transform: translateY(-2px);
+        color: white;
+    }
+    
+    .sidebar-toggle {
+        display: none;
+        position: fixed;
+        top: 80px;
+        left: 10px;
+        z-index: 1001;
+        background: var(--primary-color);
+        border: none;
+        color: white;
+        padding: 10px;
+        border-radius: 5px;
+    }
+    
+    @media (max-width: 768px) {
+        .sidebar {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar.show {
+            transform: translateX(0);
+        }
+        
+        .main-content {
+            margin-left: 0;
+        }
+        
+        .sidebar-toggle {
+            display: block;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Sidebar Toggle for Mobile -->
+<button class="btn sidebar-toggle" onclick="toggleSidebar()">
+    <i class="fas fa-bars"></i>
+</button>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+    <div class="p-4">
+        <h5 class="text-center mb-4 text-primary">
+            <i class="fas fa-shield-alt me-2"></i>Admin Panel
+        </h5>
+        
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('admin.admin_dashboard') }}">
+                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="{{ url_for('admin.admin_users') }}">
+                    <i class="fas fa-users me-2"></i>Quản lý người dùng
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('admin.admin_assessments') }}">
+                    <i class="fas fa-stethoscope me-2"></i>Đánh giá sức khỏe
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('admin.admin_contacts') }}">
+                    <i class="fas fa-envelope me-2"></i>Liên hệ
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('admin.admin_reports') }}">
+                    <i class="fas fa-chart-bar me-2"></i>Báo cáo
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('admin.admin_settings') }}">
+                    <i class="fas fa-cog me-2"></i>Cài đặt
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main-content">
+    <!-- Header -->
+    <div class="admin-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h1 class="h3 mb-0 text-white">
+                        <i class="fas fa-users me-2"></i>Quản lý người dùng
+                    </h1>
+                    <p class="text-white-50 mb-0">Quản lý tài khoản người dùng hệ thống</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <button class="btn btn-light" onclick="showAddUserModal()">
+                        <i class="fas fa-user-plus me-2"></i>Thêm người dùng mới
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="search-box">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="searchInput" placeholder="Tìm kiếm người dùng...">
+                    <button class="btn btn-primary" type="button" onclick="searchUsers()">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="all">Tất cả</button>
+                    <button class="filter-btn" data-filter="active">Hoạt động</button>
+                    <button class="filter-btn" data-filter="inactive">Không hoạt động</button>
+                    <button class="filter-btn" data-filter="admin">Admin</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Users Table -->
+    <div class="content-card">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Người dùng</th>
+                        <th>Email</th>
+                        <th>Vai trò</th>
+                        <th>Trạng thái</th>
+                        <th>Ngày tạo</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody">
+                    <tr>
+                        <td colspan="6" class="text-center">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Đang tải...</span>
+                            </div>
+                            <p class="mt-2">Đang tải danh sách người dùng...</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Pagination -->
+        <nav aria-label="User pagination">
+            <ul class="pagination justify-content-center" id="pagination">
+                <!-- Pagination will be generated here -->
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<!-- Add/Edit User Modal -->
+<div class="modal fade" id="userModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="userModalTitle">
+                    <i class="fas fa-user-plus me-2"></i>Thêm người dùng mới
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="userForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" name="email" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Tên hiển thị</label>
+                                <input type="text" class="form-control" name="display_name" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Mật khẩu</label>
+                                <input type="password" class="form-control" name="password" id="userPassword">
+                                <small class="text-muted">Để trống nếu không thay đổi</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Vai trò</label>
+                                <select class="form-select" name="is_admin">
+                                    <option value="false">Người dùng</option>
+                                    <option value="true">Admin</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Trạng thái</label>
+                                <select class="form-select" name="is_active">
+                                    <option value="true">Hoạt động</option>
+                                    <option value="false">Không hoạt động</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Giới tính</label>
+                                <select class="form-select" name="gender">
+                                    <option value="">Chọn giới tính</option>
+                                    <option value="Nam">Nam</option>
+                                    <option value="Nữ">Nữ</option>
+                                    <option value="Khác">Khác</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Tuổi</label>
+                                <input type="number" class="form-control" name="age" min="1" max="120">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Số điện thoại</label>
+                                <input type="tel" class="form-control" name="phone">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label class="form-label">Địa chỉ</label>
+                                <textarea class="form-control" name="address" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Hủy
+                </button>
+                <button type="button" class="btn btn-save" onclick="saveUser()">
+                    <i class="fas fa-save me-2"></i>Lưu
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Xác nhận xóa
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc chắn muốn xóa người dùng này?</p>
+                <p class="text-muted">Hành động này không thể hoàn tác.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-danger" onclick="confirmDelete()">
+                    <i class="fas fa-trash me-2"></i>Xóa
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let usersData = [];
+    let currentFilter = 'all';
+    let currentSearch = '';
+    let currentPage = 1;
+    let usersPerPage = 10;
+    let editingUserId = null;
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+        loadUsers();
+        setupEventListeners();
+    });
+
+    function setupEventListeners() {
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            currentSearch = e.target.value.toLowerCase();
+            currentPage = 1;
+            filterUsers();
+        });
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentFilter = this.dataset.filter;
+                currentPage = 1;
+                filterUsers();
+            });
+        });
+    }
+
+    function loadUsers() {
+        fetch('/api/firebase/users')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    usersData = data.users;
+                    filterUsers();
+                }
+            })
+            .catch(error => {
+                console.error('Error loading users:', error);
+                showAlert('Không thể tải danh sách người dùng', 'danger');
+            });
+    }
+
+    function filterUsers() {
+        let filtered = usersData;
+
+        // Apply filter
+        if (currentFilter !== 'all') {
+            filtered = filtered.filter(user => {
+                switch(currentFilter) {
+                    case 'active':
+                        return user.is_active;
+                    case 'inactive':
+                        return !user.is_active;
+                    case 'admin':
+                        return user.is_admin;
+                    default:
+                        return true;
+                }
+            });
+        }
+
+        // Apply search
+        if (currentSearch) {
+            filtered = filtered.filter(user => 
+                user.email.toLowerCase().includes(currentSearch) ||
+                (user.display_name && user.display_name.toLowerCase().includes(currentSearch))
+            );
+        }
+
+        displayUsers(filtered);
+        generatePagination(filtered.length);
+    }
+
+    function displayUsers(users) {
+        const tbody = document.getElementById('usersTableBody');
+        
+        if (users.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="text-center">
+                        <i class="fas fa-info-circle fa-2x text-muted mb-3"></i>
+                        <p class="text-muted">Không tìm thấy người dùng nào</p>
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        const startIndex = (currentPage - 1) * usersPerPage;
+        const endIndex = startIndex + usersPerPage;
+        const pageUsers = users.slice(startIndex, endIndex);
+
+        tbody.innerHTML = pageUsers.map(user => `
+            <tr>
+                <td>
+                    <div class="d-flex align-items-center">
+                        <div class="user-avatar me-3">
+                            ${user.display_name ? user.display_name.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                            <strong>${user.display_name || 'Chưa cập nhật'}</strong>
+                            <br><small class="text-muted">ID: ${user.id}</small>
+                        </div>
+                    </div>
+                </td>
+                <td>${user.email}</td>
+                <td>
+                    <span class="badge ${user.is_admin ? 'bg-danger' : 'bg-secondary'}">
+                        ${user.is_admin ? 'Admin' : 'Người dùng'}
+                    </span>
+                </td>
+                <td>
+                    <span class="status-badge ${user.is_active ? 'status-active' : 'status-inactive'}">
+                        ${user.is_active ? 'Hoạt động' : 'Không hoạt động'}
+                    </span>
+                </td>
+                <td>${formatDate(user.created_at)}</td>
+                <td>
+                    <button class="btn btn-sm btn-admin me-1" onclick="editUser('${user.id}')">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-delete" onclick="deleteUser('${user.id}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function generatePagination(totalUsers) {
+        const totalPages = Math.ceil(totalUsers / usersPerPage);
+        const pagination = document.getElementById('pagination');
+        
+        if (totalPages <= 1) {
+            pagination.innerHTML = '';
+            return;
+        }
+
+        let paginationHTML = '';
+        
+        // Previous button
+        paginationHTML += `
+            <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                <a class="page-link" href="#" onclick="changePage(${currentPage - 1})">Trước</a>
+            </li>
+        `;
+
+        // Page numbers
+        for (let i = 1; i <= totalPages; i++) {
+            if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+                paginationHTML += `
+                    <li class="page-item ${i === currentPage ? 'active' : ''}">
+                        <a class="page-link" href="#" onclick="changePage(${i})">${i}</a>
+                    </li>
+                `;
+            } else if (i === currentPage - 3 || i === currentPage + 3) {
+                paginationHTML += '<li class="page-item disabled"><span class="page-link">...</span></li>';
+            }
+        }
+
+        // Next button
+        paginationHTML += `
+            <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                <a class="page-link" href="#" onclick="changePage(${currentPage + 1})">Sau</a>
+            </li>
+        `;
+
+        pagination.innerHTML = paginationHTML;
+    }
+
+    function changePage(page) {
+        if (page < 1) return;
+        currentPage = page;
+        filterUsers();
+    }
+
+    function showAddUserModal() {
+        editingUserId = null;
+        document.getElementById('userModalTitle').innerHTML = '<i class="fas fa-user-plus me-2"></i>Thêm người dùng mới';
+        document.getElementById('userForm').reset();
+        document.getElementById('userPassword').required = true;
+        
+        const modal = new bootstrap.Modal(document.getElementById('userModal'));
+        modal.show();
+    }
+
+    function editUser(userId) {
+        const user = usersData.find(u => u.id === userId);
+        if (!user) return;
+
+        editingUserId = userId;
+        document.getElementById('userModalTitle').innerHTML = '<i class="fas fa-user-edit me-2"></i>Chỉnh sửa người dùng';
+        document.getElementById('userPassword').required = false;
+
+        // Fill form with user data
+        const form = document.getElementById('userForm');
+        form.email.value = user.email || '';
+        form.display_name.value = user.display_name || '';
+        form.is_admin.value = user.is_admin || 'false';
+        form.is_active.value = user.is_active || 'true';
+        form.gender.value = user.gender || '';
+        form.age.value = user.age || '';
+        form.phone.value = user.phone || '';
+        form.address.value = user.address || '';
+
+        const modal = new bootstrap.Modal(document.getElementById('userModal'));
+        modal.show();
+    }
+
+    function saveUser() {
+        const form = document.getElementById('userForm');
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+        
+        // Convert string values to boolean
+        data.is_admin = data.is_admin === 'true';
+        data.is_active = data.is_active === 'true';
+        
+        // Remove empty password if editing
+        if (!editingUserId && !data.password) {
+            showAlert('Mật khẩu là bắt buộc cho người dùng mới', 'danger');
+            return;
+        }
+        
+        if (editingUserId && !data.password) {
+            delete data.password;
+        }
+
+        const url = editingUserId ? `/api/firebase/users/${editingUserId}` : '/api/firebase/users';
+        const method = editingUserId ? 'PUT' : 'POST';
+
+        fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                showAlert(editingUserId ? 'Cập nhật người dùng thành công!' : 'Thêm người dùng thành công!', 'success');
+                
+                // Close modal and reload data
+                const modal = bootstrap.Modal.getInstance(document.getElementById('userModal'));
+                modal.hide();
+                
+                setTimeout(() => {
+                    loadUsers();
+                }, 1000);
+            } else {
+                showAlert(result.error || 'Có lỗi xảy ra', 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showAlert('Có lỗi xảy ra khi lưu người dùng', 'danger');
+        });
+    }
+
+    function deleteUser(userId) {
+        editingUserId = userId;
+        const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+        modal.show();
+    }
+
+    function confirmDelete() {
+        if (!editingUserId) return;
+
+        fetch(`/api/firebase/users/${editingUserId}`, {
+            method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                showAlert('Xóa người dùng thành công!', 'success');
+                
+                // Close modal and reload data
+                const modal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'));
+                modal.hide();
+                
+                setTimeout(() => {
+                    loadUsers();
+                }, 1000);
+            } else {
+                showAlert(result.error || 'Có lỗi xảy ra khi xóa', 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showAlert('Có lỗi xảy ra khi xóa người dùng', 'danger');
+        });
+    }
+
+    function searchUsers() {
+        const searchInput = document.getElementById('searchInput');
+        currentSearch = searchInput.value.toLowerCase();
+        currentPage = 1;
+        filterUsers();
+    }
+
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        sidebar.classList.toggle('show');
+    }
+
+    function formatDate(dateString) {
+        if (!dateString) return 'N/A';
+        
+        const date = new Date(dateString);
+        return date.toLocaleDateString('vi-VN', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+
+    function showAlert(message, type) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+        alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+        alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        
+        document.body.appendChild(alertDiv);
+        
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            if (alertDiv.parentNode) {
+                alertDiv.remove();
+            }
+        }, 5000);
+    }
+</script>
+{% endblock %}
